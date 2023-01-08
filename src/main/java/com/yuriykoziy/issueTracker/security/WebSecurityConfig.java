@@ -25,8 +25,9 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/v*/registration").permitAll()
                 .antMatchers("/api/v*/basicauth").permitAll()
-                .antMatchers("/api/v*/issue/").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/v*/comment/").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v*/issue/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/api/v*/comment/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/api/v*/profile/**").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
