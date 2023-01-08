@@ -22,7 +22,7 @@ public class RegisterService {
                         request.getFirstName(),
                         request.getLastName(),
                         request.getEmail(),
-                        request.getUserName(),
+                        request.getUsername(),
                         request.getPassword(),
                         UserRole.USER
                 )

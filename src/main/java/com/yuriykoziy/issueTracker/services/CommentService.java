@@ -48,7 +48,7 @@ public class CommentService {
         for (Comment comment: comments) {
             CommentDto dto = new CommentDto();
             modelMapper.map(comment, dto);
-            dto.setUserName(comment.getAuthor().getUsername());
+            dto.setUsername(comment.getAuthor().getUsername());
             commentsDto.add(dto);
         }
         return commentsDto;

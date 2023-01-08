@@ -10,7 +10,7 @@ import javax.persistence.Enumerated;
 public class UserProfileDto {
     private String firstName;
     private String lastName;
-    private String userName;
+    private String username;
     private String email;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;

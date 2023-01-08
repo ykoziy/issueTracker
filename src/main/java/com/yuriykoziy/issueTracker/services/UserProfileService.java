@@ -27,8 +27,8 @@ public class UserProfileService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userProfileRepository.findByUserName(email).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userProfileRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, username)));
     }
 
     public String register(UserProfile userProfile) {
@@ -37,7 +37,7 @@ public class UserProfileService implements UserDetailsService {
                 .isPresent();
 
         boolean userNameExists = userProfileRepository
-                .findByUserName(userProfile.getUsername())
+                .findByUsername(userProfile.getUsername())
                 .isPresent();
 
         if (userEmailExists) {
@@ -65,12 +65,6 @@ public class UserProfileService implements UserDetailsService {
             throw new IllegalStateException(String.format(USER_ID_NOT_FOUND_MSG, id));
         }
         UserProfile user = userOptional.get();
-        UserProfileDto userDto = new UserProfileDto();
-        userDto.setUserName(user.getUsername());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
-        userDto.setUserRole(user.getUserRole());
-        userDto.setEmail(user.getEmail());
-        return userDto;
+        return modelMapper.map(user, UserProfileDto.class);
     }
 }

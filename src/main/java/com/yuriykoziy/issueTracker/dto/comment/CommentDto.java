@@ -12,5 +12,5 @@ public class CommentDto {
     private Long issueId;
     private LocalDateTime addedOn;
     private LocalDate updatedOn;
-    private String userName;
+    private String username;
 }

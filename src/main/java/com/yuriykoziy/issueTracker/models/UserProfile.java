@@ -22,7 +22,7 @@ public class UserProfile implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
-    private String userName;
+    private String username;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -30,24 +30,19 @@ public class UserProfile implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = true;
 
-    public UserProfile(String firstName, String lastName, String email, String userName, String password, UserRole userRole) {
+    public UserProfile(String firstName, String lastName, String email, String username, String password, UserRole userRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.userRole = userRole;
-        this.userName = userName;
+        this.username = username;
     }
     // get the authorities granted to the user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
         return Collections.singletonList(authority);
-    }
-
-    @Override
-    public String getUsername() {
-        return userName;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthService {
 
+   private final ModelMapper modelMapper;
+
    public UserDto getAuthUser(Authentication auth) {
       UserProfile authProfile = (UserProfile) auth.getPrincipal();
-      UserDto userDto = new UserDto();
-      userDto.setId(authProfile.getId());
-      userDto.setUserRole(authProfile.getUserRole());
-      return userDto;
+      return modelMapper.map(authProfile, UserDto.class);
    }
 }
