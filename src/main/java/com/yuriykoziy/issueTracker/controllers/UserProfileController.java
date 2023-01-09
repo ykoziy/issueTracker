@@ -18,4 +18,9 @@ public class UserProfileController {
         return userProfileService.getUserProfileById(id);
     }
 
+    @PostMapping
+    public boolean updateProfile(@RequestBody UserProfileDto request) {
+        return userProfileService.updateProfile(request);
+    }
+
 }

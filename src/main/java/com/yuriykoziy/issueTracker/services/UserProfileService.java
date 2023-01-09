@@ -1,6 +1,9 @@
 package com.yuriykoziy.issueTracker.services;
 
 import com.yuriykoziy.issueTracker.dto.UserProfileDto;
+import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
+import com.yuriykoziy.issueTracker.models.Comment;
+import com.yuriykoziy.issueTracker.models.Issue;
 import com.yuriykoziy.issueTracker.models.UserProfile;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import lombok.AllArgsConstructor;
@@ -11,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 // get user related data
@@ -66,5 +70,16 @@ public class UserProfileService implements UserDetailsService {
         }
         UserProfile user = userOptional.get();
         return modelMapper.map(user, UserProfileDto.class);
+    }
+
+    public boolean updateProfile(UserProfileDto user) {
+        Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
+        if (!userOptional.isPresent()) {
+            throw new IllegalStateException("no user found");
+        }
+        UserProfile userProfile = userOptional.get();
+        modelMapper.map(user, userProfile);
+        userProfileRepository.save(userProfile);
+        return true;
     }
 }
