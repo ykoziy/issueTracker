@@ -5,6 +5,9 @@ import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.services.CommentService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +27,14 @@ public class CommentController {
     @GetMapping(params = "issueId")
     public List<CommentDto> getIssueComments(@RequestParam Long issueId) {
         return commentService.getCommentsForIssue(issueId);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Long> userDeleteComment(@RequestParam Long userId, @RequestParam Long commentId) {
+        Long result = commentService.userDeleteComment(userId, commentId);
+        if (result != 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
