@@ -47,6 +47,14 @@ public class IssueService {
         return issueRepository.findAllByStatus(issueStatus).stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
     }
 
+    public IssueDto findById(Long issueId) {
+        Optional<Issue> issueOptional = issueRepository.findById(issueId);
+        if (!issueOptional.isPresent()) {
+            throw new IllegalStateException("no issue found");
+        }
+        return modelMapper.map(issueOptional.get(), IssueDto.class);
+    }
+
     @Transactional
     public void addNewIssue(NewIssueDto newIssueDto) {
         Optional<UserProfile> userOptional  = userProfileRepository.findById(newIssueDto.getUserId());

@@ -24,6 +24,9 @@ public class IssueController {
         return issueService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public IssueDto findIssueById(@PathVariable("id") Long id) {return issueService.findById(id);}
+
     @GetMapping(value = "/open", params = "id")
     public List<IssueDto> findIssuesOpenedById(@RequestParam Long id) {
         return issueService.findOpenedByUser(id);
