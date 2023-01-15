@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +85,7 @@ public class CommentService {
             throw new IllegalStateException("no comment associated with the user found");
         }
         modelMapper.map(comment, editComment);
+        editComment.setUpdatedOn(LocalDateTime.now());
         commentRepository.save(editComment);
         return true;
     }

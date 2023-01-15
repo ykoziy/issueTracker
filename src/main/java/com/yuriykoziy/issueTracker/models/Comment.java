@@ -28,7 +28,7 @@ public class Comment {
 
     private String content;
     private LocalDateTime addedOn = LocalDateTime.now();
-    private LocalDate updatedOn;
+    private LocalDateTime updatedOn;
 
     @ManyToOne
     @JoinColumn(name = "issue_id")
