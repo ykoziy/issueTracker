@@ -2,7 +2,6 @@ package com.yuriykoziy.issueTracker.controllers;
 
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
-import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.services.CommentService;
 import lombok.AllArgsConstructor;
 
@@ -36,5 +35,10 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/edit")
+    public boolean userUpdateComment(@RequestParam Long userId, @RequestBody CommentDto comment) {
+        return commentService.userUpdateComment(userId, comment);
     }
 }

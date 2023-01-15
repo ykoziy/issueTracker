@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
+import com.yuriykoziy.issueTracker.dto.UserProfileDto;
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
 import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
@@ -67,5 +68,23 @@ public class CommentService {
             throw new IllegalStateException("no comment associated with the user found");
         }
 
+    }
+
+    public boolean userUpdateComment(Long userId, CommentDto comment) {
+        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
+        if (!userOptional.isPresent()) {
+            throw new IllegalStateException("no user found");
+        }
+        Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
+        if (!commentOptional.isPresent()) {
+            throw new IllegalStateException("no comment found");
+        }
+        Comment editComment = commentOptional.get();
+        if (!editComment.getAuthor().getId().equals(userId)) {
+            throw new IllegalStateException("no comment associated with the user found");
+        }
+        modelMapper.map(comment, editComment);
+        commentRepository.save(editComment);
+        return true;
     }
 }
