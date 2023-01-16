@@ -10,6 +10,8 @@ import com.yuriykoziy.issueTracker.repositories.IssueRepository;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -54,7 +56,15 @@ public class CommentService {
     }
 
     @Transactional
-    public Long userDeleteComment(Long userId, Long commentId) {
+    public Long deleteComment(Long userId, Long commentId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+            Optional<Comment> commentOptional = commentRepository.findById(commentId);
+            if (commentOptional.isPresent()) {
+                return commentRepository.removeById(commentId);
+            }
+        }
+
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
             throw new IllegalStateException("no user found");
@@ -68,7 +78,7 @@ public class CommentService {
 
     }
 
-    public boolean userUpdateComment(Long userId, CommentDto comment) {
+    public boolean updateComment(Long userId, CommentDto comment) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
             throw new IllegalStateException("no user found");
@@ -78,6 +88,13 @@ public class CommentService {
             throw new IllegalStateException("no comment found");
         }
         Comment editComment = commentOptional.get();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+            modelMapper.map(comment, editComment);
+            editComment.setUpdatedOn(LocalDateTime.now());
+            commentRepository.save(editComment);
+            return true;
+        }
         if (!editComment.getAuthor().getId().equals(userId)) {
             throw new IllegalStateException("no comment associated with the user found");
         }

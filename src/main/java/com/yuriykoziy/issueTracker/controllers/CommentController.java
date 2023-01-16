@@ -30,7 +30,7 @@ public class CommentController {
 
     @DeleteMapping()
     public ResponseEntity<Long> userDeleteComment(@RequestParam Long userId, @RequestParam Long commentId) {
-        Long result = commentService.userDeleteComment(userId, commentId);
+        Long result = commentService.deleteComment(userId, commentId);
         if (result != 0) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -39,6 +39,6 @@ public class CommentController {
 
     @PostMapping("/edit")
     public boolean userUpdateComment(@RequestParam Long userId, @RequestBody CommentDto comment) {
-        return commentService.userUpdateComment(userId, comment);
+        return commentService.updateComment(userId, comment);
     }
 }

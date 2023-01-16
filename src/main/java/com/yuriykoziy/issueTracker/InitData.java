@@ -32,7 +32,7 @@ public class InitData implements ApplicationRunner {
         String pwd = passwordEncoder.bCryptPasswordEncoder().encode("password");
         UserProfile userA = new UserProfile("Bob", "Smith","bob@example.com","bsmith765",pwd, UserRole.USER);
         UserProfile userB = new UserProfile("Alice", "Doe","alice.doe@example.com","darmouse",pwd, UserRole.USER);
-        UserProfile userC = new UserProfile("Thomas", "Anderson","thomas.anderson@example.com","Neo",pwd, UserRole.USER);
+        UserProfile userC = new UserProfile("Thomas", "Anderson","thomas.anderson@example.com","Neo",pwd, UserRole.ADMIN);
         userProfileRepository.save(userA);
         userProfileRepository.save(userB);
         userProfileRepository.save(userC);
