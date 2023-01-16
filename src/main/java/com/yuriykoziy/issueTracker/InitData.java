@@ -1,6 +1,7 @@
 package com.yuriykoziy.issueTracker;
 
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
+import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import com.yuriykoziy.issueTracker.enums.UserRole;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.models.Issue;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 @AllArgsConstructor
@@ -37,9 +40,14 @@ public class InitData implements ApplicationRunner {
         Issue a = new Issue("An issue #1", "some low priority issue", userA);
         Issue c = new Issue("An issue with JPA", "there is an issue but it is low priority", userB);
         Issue b = new Issue("An issue #2", "some low priority issue", IssuePriority.HIGH, userA);
+        Issue d = new Issue("Some resolved issue", "this issue is already resolved", IssuePriority.MEDIUM, IssueStatus.CLOSED, userB);
+        d.setResolution("An easy fix, just fixed spelling");
+        d.setCloser(userA);
+        d.setClosedOn(LocalDateTime.now());
         issueRepository.save(a);
         issueRepository.save(b);
         issueRepository.save(c);
+        issueRepository.save(d);
 
 
         Comment parent = new Comment(userA,"Any input guys?", a);

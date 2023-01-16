@@ -2,7 +2,6 @@ package com.yuriykoziy.issueTracker.dto.issue;
 
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
 import com.yuriykoziy.issueTracker.enums.IssueStatus;
-import com.yuriykoziy.issueTracker.models.UserProfile;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,8 +14,10 @@ public class IssueDto {
     private IssuePriority priority;
     private IssueStatus status;
     private Long creatorId;
+    private String creatorUsername;
     private LocalDateTime createdOn;
     private Long closerId;
+    private String closerUsername;
     private LocalDateTime updatedOn;
     private LocalDateTime closedOn;
     private String resolution;
