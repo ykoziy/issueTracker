@@ -7,6 +7,8 @@ import com.yuriykoziy.issueTracker.enums.IssuePriority;
 import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import com.yuriykoziy.issueTracker.services.IssueService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,5 +57,14 @@ public class IssueController {
     @PostMapping("/close")
     public void closeIssue(@RequestBody CloseIssueDto closeIssueDto) {
         issueService.closeIssue(closeIssueDto);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Long> deleteIssue(@RequestParam Long userId, @RequestParam Long issueId) {
+        Long result = issueService.deleteIssue(userId, issueId);
+        if (result != 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

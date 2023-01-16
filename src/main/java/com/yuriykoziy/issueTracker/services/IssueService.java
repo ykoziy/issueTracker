@@ -89,7 +89,19 @@ public class IssueService {
         issue.setCloser(userOptional.get());
     }
 
-    //edit issue, admin can edit globally
+    @Transactional
+    public Long deleteIssue(Long userId, Long issueId) {
+        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
+        if (!userOptional.isPresent()) {
+            throw new IllegalStateException("no user found");
+        }
 
-    // edit issue, a user (cant close) - WIP RIGHT NOW
+        Optional<Issue> issueOptional = issueRepository.findByIdAndCreatorId(issueId, userId);
+        if (issueOptional.isPresent()) {
+            return issueRepository.removeById(issueId);
+        } else {
+            throw new IllegalStateException("no issue associated with the user found");
+        }
+
+    }
 }

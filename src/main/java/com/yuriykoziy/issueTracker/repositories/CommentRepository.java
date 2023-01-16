@@ -8,10 +8,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAll();
-
     List<Comment> findAllByIssueId(Long id);
-
     Optional<Comment> findByIdAndAuthorId(Long id, Long authorId);
-
     Long removeById(Long id);
 }

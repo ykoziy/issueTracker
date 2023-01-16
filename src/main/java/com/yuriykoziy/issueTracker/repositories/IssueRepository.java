@@ -13,4 +13,6 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     List<Issue> findAllByStatus(IssueStatus issueStatus);
     List<Issue> findAllByCloserId(Long id);
     List<Issue> findAllByCreatorId(Long id);
+    Optional<Issue> findByIdAndCreatorId(Long id, Long authorId);
+    Long removeById(Long id);
 }

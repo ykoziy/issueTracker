@@ -5,8 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,7 +35,8 @@ public class Issue {
     private LocalDateTime closedOn;
     private String resolution;
 
-
+    @OneToMany(mappedBy="issue", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public Issue(String title, String description, IssuePriority priority, UserProfile creator) {
         this.title = title;

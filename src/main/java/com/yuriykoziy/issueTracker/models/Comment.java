@@ -1,15 +1,9 @@
 package com.yuriykoziy.issueTracker.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
 
+import lombok.*;
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -30,7 +24,7 @@ public class Comment {
     private LocalDateTime addedOn = LocalDateTime.now();
     private LocalDateTime updatedOn;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "issue_id")
     private Issue issue;
 
