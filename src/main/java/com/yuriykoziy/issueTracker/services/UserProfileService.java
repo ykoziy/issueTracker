@@ -1,9 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
 import com.yuriykoziy.issueTracker.dto.UserProfileDto;
-import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
-import com.yuriykoziy.issueTracker.models.Comment;
-import com.yuriykoziy.issueTracker.models.Issue;
 import com.yuriykoziy.issueTracker.models.UserProfile;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import lombok.AllArgsConstructor;
@@ -14,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 // get user related data

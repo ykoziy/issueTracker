@@ -1,9 +1,7 @@
 package com.yuriykoziy.issueTracker.services;
 
-import com.yuriykoziy.issueTracker.dto.UserProfileDto;
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
-import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.models.Issue;
 import com.yuriykoziy.issueTracker.models.UserProfile;
@@ -19,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

@@ -68,7 +68,6 @@ public class IssueService {
         issueRepository.save(newIssue);
     }
 
-    //change issue status to CLOSED, resolution message must be added (user)
     @Transactional
     public void closeIssue(CloseIssueDto closeIssueDto) {
         Optional<Issue> issueOptional = issueRepository.findById(closeIssueDto.getIssueId());
@@ -76,7 +75,7 @@ public class IssueService {
             throw new IllegalStateException("no issue found");
         }
         Issue issue = issueOptional.get();
-        if (issue.getCreator().getId() != closeIssueDto.getUserId()) {
+        if (!issue.getCreator().getId().equals(closeIssueDto.getUserId())) {
             throw new IllegalStateException("issue does not belong to a user");
         }
         Optional<UserProfile> userOptional  = userProfileRepository.findById(closeIssueDto.getUserId());
@@ -86,6 +85,7 @@ public class IssueService {
         issue.setResolution(closeIssueDto.getResolution());
         issue.setClosedOn(LocalDateTime.now());
         issue.setUpdatedOn(LocalDateTime.now());
+        issue.setStatus(IssueStatus.CLOSED);
         issue.setCloser(userOptional.get());
     }
 

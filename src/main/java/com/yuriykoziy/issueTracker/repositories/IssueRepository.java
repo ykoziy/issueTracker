@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IssueRepository extends JpaRepository<Issue, Long> {
-    List<Issue> findAll();
     List<Issue> findAllByPriority(IssuePriority issuePriority);
     List<Issue> findAllByStatus(IssueStatus issueStatus);
     List<Issue> findAllByCloserId(Long id);

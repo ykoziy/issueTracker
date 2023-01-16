@@ -42,7 +42,7 @@ public class InitData implements ApplicationRunner {
         Issue b = new Issue("An issue #2", "some low priority issue", IssuePriority.HIGH, userA);
         Issue d = new Issue("Some resolved issue", "this issue is already resolved", IssuePriority.MEDIUM, IssueStatus.CLOSED, userB);
         d.setResolution("An easy fix, just fixed spelling");
-        d.setCloser(userA);
+        d.setCloser(userB);
         d.setClosedOn(LocalDateTime.now());
         issueRepository.save(a);
         issueRepository.save(b);
