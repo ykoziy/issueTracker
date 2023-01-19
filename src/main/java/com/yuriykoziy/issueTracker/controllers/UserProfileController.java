@@ -3,6 +3,9 @@ package com.yuriykoziy.issueTracker.controllers;
 import com.yuriykoziy.issueTracker.dto.UserProfileDto;
 import com.yuriykoziy.issueTracker.services.UserProfileService;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +24,16 @@ public class UserProfileController {
     @PostMapping
     public boolean updateProfile(@RequestBody UserProfileDto request) {
         return userProfileService.updateProfile(request);
+    }
+
+    @GetMapping("/users")
+    public List<UserProfileDto> getAllUsers() {
+        return userProfileService.getAllUsers();
+    }
+
+    @PostMapping("/ban")
+    public boolean banUser(@RequestBody UserProfileDto request) {
+        return userProfileService.banUser(request);
     }
 
 }

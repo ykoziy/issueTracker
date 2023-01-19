@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // get user related data
 @Service
@@ -28,7 +30,8 @@ public class UserProfileService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userProfileRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, username)));
+        return userProfileRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, username)));
     }
 
     public String register(UserProfile userProfile) {
@@ -74,6 +77,23 @@ public class UserProfileService implements UserDetailsService {
             throw new IllegalStateException("no user found");
         }
         UserProfile userProfile = userOptional.get();
+        modelMapper.map(user, userProfile);
+        userProfileRepository.save(userProfile);
+        return true;
+    }
+
+    public List<UserProfileDto> getAllUsers() {
+        return userProfileRepository.findAll().stream().map(user -> modelMapper.map(user, UserProfileDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public boolean banUser(UserProfileDto user) {
+        Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
+        if (!userOptional.isPresent()) {
+            throw new IllegalStateException("no user found");
+        }
+        UserProfile userProfile = userOptional.get();
+        userProfile.setLocked(true);
         modelMapper.map(user, userProfile);
         userProfileRepository.save(userProfile);
         return true;
