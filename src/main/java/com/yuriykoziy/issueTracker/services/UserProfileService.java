@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
+import com.yuriykoziy.issueTracker.constants.ErrorMessages;
 import com.yuriykoziy.issueTracker.dto.UserProfileDto;
 import com.yuriykoziy.issueTracker.models.UserProfile;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
@@ -19,10 +20,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class UserProfileService implements UserDetailsService {
-
-    private final static String USER_NOT_FOUND_MSG = "user with email %s is not found";
-
-    private final static String USER_ID_NOT_FOUND_MSG = "user with id %s is not found";
     private final UserProfileRepository userProfileRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -31,7 +28,7 @@ public class UserProfileService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userProfileRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, username)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, username)));
     }
 
     public String register(UserProfile userProfile) {
@@ -44,11 +41,11 @@ public class UserProfileService implements UserDetailsService {
                 .isPresent();
 
         if (userEmailExists) {
-            throw new IllegalStateException("email already taken");
+            throw new IllegalStateException(ErrorMessages.EMAIL_TAKEN);
         }
 
         if (userNameExists) {
-            throw new IllegalStateException("username already taken");
+            throw new IllegalStateException(ErrorMessages.USERNAME_TAKEN);
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(userProfile.getPassword());
@@ -65,7 +62,7 @@ public class UserProfileService implements UserDetailsService {
     public UserProfileDto getUserProfileById(Long id) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(id);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(String.format(USER_ID_NOT_FOUND_MSG, id));
+            throw new IllegalStateException(String.format(ErrorMessages.USER_ID_NOT_FOUND, id));
         }
         UserProfile user = userOptional.get();
         return modelMapper.map(user, UserProfileDto.class);
@@ -74,7 +71,7 @@ public class UserProfileService implements UserDetailsService {
     public boolean updateProfile(UserProfileDto user) {
         Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("no user found");
+            throw new IllegalStateException(ErrorMessages.userNotFound);
         }
         UserProfile userProfile = userOptional.get();
         modelMapper.map(user, userProfile);
@@ -90,7 +87,7 @@ public class UserProfileService implements UserDetailsService {
     public boolean banUser(UserProfileDto user) {
         Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("no user found");
+            throw new IllegalStateException(ErrorMessages.userNotFound);
         }
         UserProfile userProfile = userOptional.get();
         userProfile.setLocked(true);

@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
+import com.yuriykoziy.issueTracker.constants.ErrorMessages;
 import com.yuriykoziy.issueTracker.dto.issue.CloseIssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.NewIssueDto;
@@ -52,7 +53,7 @@ public class IssueService {
     public IssueDto findById(Long issueId) {
         Optional<Issue> issueOptional = issueRepository.findById(issueId);
         if (!issueOptional.isPresent()) {
-            throw new IllegalStateException("no issue found");
+            throw new IllegalStateException(ErrorMessages.ISSUE_NOT_FOUND);
         }
         return modelMapper.map(issueOptional.get(), IssueDto.class);
     }
@@ -61,7 +62,7 @@ public class IssueService {
     public void addNewIssue(NewIssueDto newIssueDto) {
         Optional<UserProfile> userOptional  = userProfileRepository.findById(newIssueDto.getUserId());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("no user found");
+            throw new IllegalStateException(ErrorMessages.userNotFound);
         }
         Issue newIssue = new Issue();
         modelMapper.map(newIssueDto, newIssue);
@@ -74,7 +75,7 @@ public class IssueService {
     public void closeIssue(CloseIssueDto closeIssueDto) {
         Optional<Issue> issueOptional = issueRepository.findById(closeIssueDto.getIssueId());
         if (!issueOptional.isPresent()) {
-            throw new IllegalStateException("no issue found");
+            throw new IllegalStateException(ErrorMessages.ISSUE_NOT_FOUND);
         }
 
         Issue issue = issueOptional.get();
@@ -91,11 +92,11 @@ public class IssueService {
         }
 
         if (!issue.getCreator().getId().equals(closeIssueDto.getUserId())) {
-            throw new IllegalStateException("issue does not belong to a user");
+            throw new IllegalStateException(ErrorMessages.NO_USER_ISSUE_FOUND);
         }
         Optional<UserProfile> userOptional  = userProfileRepository.findById(closeIssueDto.getUserId());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("no user found");
+            throw new IllegalStateException(ErrorMessages.userNotFound);
         }
         issue.setResolution(closeIssueDto.getResolution());
         issue.setClosedOn(LocalDateTime.now());
@@ -116,14 +117,14 @@ public class IssueService {
 
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("no user found");
+            throw new IllegalStateException(ErrorMessages.userNotFound);
         }
 
         Optional<Issue> issueOptional = issueRepository.findByIdAndCreatorId(issueId, userId);
         if (issueOptional.isPresent()) {
             return issueRepository.removeById(issueId);
         } else {
-            throw new IllegalStateException("no issue associated with the user found");
+            throw new IllegalStateException(ErrorMessages.NO_USER_ISSUE_FOUND);
         }
 
     }
