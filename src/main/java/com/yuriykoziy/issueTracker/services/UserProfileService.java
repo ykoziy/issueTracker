@@ -28,7 +28,8 @@ public class UserProfileService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userProfileRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, username)));
+                .orElseThrow(
+                        () -> new UsernameNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, username)));
     }
 
     public String register(UserProfile userProfile) {
@@ -91,7 +92,8 @@ public class UserProfileService implements UserDetailsService {
         }
         UserProfile userProfile = userOptional.get();
         userProfile.setLocked(true);
-        modelMapper.map(user, userProfile);
+        System.out.println("Banning " + userProfile.getEmail());
+        System.out.println("Banning status " + userProfile.getLocked());
         userProfileRepository.save(userProfile);
         return true;
     }
