@@ -92,8 +92,6 @@ public class UserProfileService implements UserDetailsService {
         }
         UserProfile userProfile = userOptional.get();
         userProfile.setLocked(true);
-        System.out.println("Banning " + userProfile.getEmail());
-        System.out.println("Banning status " + userProfile.getLocked());
         userProfileRepository.save(userProfile);
         return true;
     }
