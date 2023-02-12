@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.yuriykoziy.issueTracker.models.UserProfile;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -33,24 +34,26 @@ public class JwtService {
       return claimsResolver.apply(claims);
    }
 
-   public String generateToken(UserDetails userDetails) {
-      return generateToken(new HashMap<>(), userDetails);
+   public String generateToken(UserProfile userProfile) {
+      return generateToken(new HashMap<>(), userProfile);
    }
 
-   public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+   public String generateToken(Map<String, Object> extraClaims, UserProfile userProfile) {
       return Jwts
             .builder()
             .setClaims(extraClaims)
-            .setSubject(userDetails.getUsername())
+            .setSubject(userProfile.getUsername())
+            .claim("id", userProfile.getId())
+            .claim("role", userProfile.getUserRole())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
             .signWith(getSignInKey(), SignatureAlgorithm.HS256)
             .compact();
    }
 
-   public Boolean isTokenValid(String token, UserDetails userDetails) {
+   public Boolean isTokenValid(String token, UserProfile userProfile) {
       final String username = extractUsername(token);
-      return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+      return (username.equals(userProfile.getUsername()) && !isTokenExpired(token));
    }
 
    private Claims extractAllClaims(String token) {

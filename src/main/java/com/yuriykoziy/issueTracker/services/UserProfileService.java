@@ -25,7 +25,7 @@ public class UserProfileService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserProfile loadUserByUsername(String username) throws UsernameNotFoundException {
         return userProfileRepository.findByUsername(username)
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, username)));
