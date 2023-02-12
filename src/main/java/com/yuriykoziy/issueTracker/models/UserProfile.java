@@ -1,20 +1,34 @@
 package com.yuriykoziy.issueTracker.models;
 
-import com.yuriykoziy.issueTracker.enums.UserRole;
-import lombok.*;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
+import com.yuriykoziy.issueTracker.enums.UserRole;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class UserProfile implements UserDetails {
     @Id
@@ -30,7 +44,8 @@ public class UserProfile implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = true;
 
-    public UserProfile(String firstName, String lastName, String email, String username, String password, UserRole userRole) {
+    public UserProfile(String firstName, String lastName, String email, String username, String password,
+            UserRole userRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -38,6 +53,7 @@ public class UserProfile implements UserDetails {
         this.userRole = userRole;
         this.username = username;
     }
+
     // get the authorities granted to the user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
