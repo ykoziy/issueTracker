@@ -22,8 +22,8 @@ public class UserProfileController {
     }
 
     @PostMapping
-    public boolean updateProfile(@RequestBody UserProfileDto request) {
-        return userProfileService.updateProfile(request);
+    public boolean updateProfile(@RequestBody UserProfileDto request, @RequestParam Long id) {
+        return userProfileService.updateProfile(request, id);
     }
 
     @GetMapping("/users")

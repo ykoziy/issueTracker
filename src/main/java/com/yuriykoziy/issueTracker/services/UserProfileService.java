@@ -40,8 +40,8 @@ public class UserProfileService implements UserDetailsService {
         return modelMapper.map(user, UserProfileDto.class);
     }
 
-    public boolean updateProfile(UserProfileDto user) {
-        Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
+    public boolean updateProfile(UserProfileDto user, Long userId) {
+        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
             throw new IllegalStateException(ErrorMessages.userNotFound);
         }
