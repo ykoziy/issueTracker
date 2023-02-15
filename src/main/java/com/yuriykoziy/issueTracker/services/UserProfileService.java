@@ -62,7 +62,8 @@ public class UserProfileService implements UserDetailsService {
             throw new IllegalStateException(ErrorMessages.userNotFound);
         }
         UserProfile userProfile = userOptional.get();
-        userProfile.setLocked(true);
+        userProfile.setEnabled(false);
+        System.out.println(userProfile);
         userProfileRepository.save(userProfile);
         return true;
     }

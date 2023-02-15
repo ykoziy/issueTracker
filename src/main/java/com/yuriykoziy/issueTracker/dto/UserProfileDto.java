@@ -15,4 +15,5 @@ public class UserProfileDto {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked;
+    private Boolean enabled;
 }
