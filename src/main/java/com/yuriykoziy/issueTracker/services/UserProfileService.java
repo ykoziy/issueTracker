@@ -63,7 +63,6 @@ public class UserProfileService implements UserDetailsService {
         }
         UserProfile userProfile = userOptional.get();
         userProfile.setEnabled(false);
-        System.out.println(userProfile);
         userProfileRepository.save(userProfile);
         return true;
     }
