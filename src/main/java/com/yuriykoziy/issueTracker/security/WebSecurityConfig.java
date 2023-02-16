@@ -24,7 +24,6 @@ public class WebSecurityConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v*/registration").permitAll()
                 .antMatchers("/api/v*/auth/**").permitAll()
                 .antMatchers("/api/v*/issue/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/api/v*/comment/**").hasAnyAuthority("USER", "ADMIN")

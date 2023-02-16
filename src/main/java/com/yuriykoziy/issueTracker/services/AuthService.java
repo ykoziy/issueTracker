@@ -26,7 +26,7 @@ public class AuthService {
    private final UserProfileRepository userProfileRepository;
    private final PasswordEncoder passwordEncoder;
 
-   public AuthenticationResponse register(RegistrationDto request) {
+   public boolean register(RegistrationDto request) {
       boolean isValidEmail = emailValidator.test(request.getEmail());
       if (!isValidEmail) {
          throw new IllegalStateException(ErrorMessages.INVALID_EMAIL);
@@ -56,14 +56,9 @@ public class AuthService {
          throw new IllegalStateException(ErrorMessages.USERNAME_TAKEN);
       }
 
-      String encodedPassword = passwordEncoder.encode(userProfile.getPassword());
-
-      userProfile.setPassword(encodedPassword);
-
       userProfileRepository.save(userProfile);
 
-      String jwtToken = jwtService.generateToken(userProfile);
-      return new AuthenticationResponse(jwtToken);
+      return true;
    }
 
    public AuthenticationResponse authenticate(AuthenticationRequest request) {
