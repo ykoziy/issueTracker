@@ -38,4 +38,11 @@ public class ExceptionHandling {
    public ErrorResponse commentException(CommentException ex) {
       return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
    }
+
+   @ExceptionHandler(UserNotFoundException.class)
+   @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+   @ResponseBody
+   public ErrorResponse validationException(ValidationException ex) {
+      return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getMessage());
+   }
 }
