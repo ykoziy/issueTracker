@@ -3,6 +3,7 @@ package com.yuriykoziy.issueTracker.services;
 import com.yuriykoziy.issueTracker.constants.ErrorMessages;
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
+import com.yuriykoziy.issueTracker.exceptions.CommentException;
 import com.yuriykoziy.issueTracker.exceptions.UserNotFoundException;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.models.Issue;
@@ -39,7 +40,7 @@ public class CommentService {
         }
         Optional<Issue> issueOptional = issueRepository.findById(newComment.getIssueId());
         if (!issueOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.ISSUE_NOT_FOUND);
+            throw new CommentException(ErrorMessages.ISSUE_NOT_FOUND);
         }
         Comment comment = new Comment(userOptional.get(), newComment.getContent(), issueOptional.get());
         commentRepository.save(comment);
@@ -75,7 +76,7 @@ public class CommentService {
         if (commentOptional.isPresent()) {
             return commentRepository.removeById(commentId);
         } else {
-            throw new IllegalStateException(ErrorMessages.NO_USER_COMMENT_FOUND);
+            throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
         }
 
     }
@@ -87,7 +88,7 @@ public class CommentService {
         }
         Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
         if (!commentOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.NO_COMMENT_FOUND);
+            throw new CommentException(ErrorMessages.NO_COMMENT_FOUND);
         }
         Comment editComment = commentOptional.get();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -98,7 +99,7 @@ public class CommentService {
             return true;
         }
         if (!editComment.getAuthor().getId().equals(userId)) {
-            throw new IllegalStateException(ErrorMessages.NO_USER_COMMENT_FOUND);
+            throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
         }
         modelMapper.map(comment, editComment);
         editComment.setUpdatedOn(LocalDateTime.now());
