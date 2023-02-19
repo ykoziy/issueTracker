@@ -25,21 +25,21 @@ public class ExceptionHandling {
       return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
    }
 
-   @ExceptionHandler(UserNotFoundException.class)
+   @ExceptionHandler(IssueException.class)
    @ResponseStatus(HttpStatus.NOT_FOUND)
    @ResponseBody
    public ErrorResponse issueException(IssueException ex) {
       return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
    }
 
-   @ExceptionHandler(UserNotFoundException.class)
+   @ExceptionHandler(CommentException.class)
    @ResponseStatus(HttpStatus.NOT_FOUND)
    @ResponseBody
    public ErrorResponse commentException(CommentException ex) {
       return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
    }
 
-   @ExceptionHandler(UserNotFoundException.class)
+   @ExceptionHandler(ValidationException.class)
    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
    @ResponseBody
    public ErrorResponse validationException(ValidationException ex) {
