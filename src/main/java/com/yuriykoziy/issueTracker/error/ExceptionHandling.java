@@ -24,4 +24,11 @@ public class ExceptionHandling {
    public ErrorResponse userNotFoundException(UserNotFoundException ex) {
       return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
    }
+
+   @ExceptionHandler(UserNotFoundException.class)
+   @ResponseStatus(HttpStatus.NOT_FOUND)
+   @ResponseBody
+   public ErrorResponse issueException(IssueException ex) {
+      return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+   }
 }
