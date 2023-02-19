@@ -35,7 +35,7 @@ public class CommentService {
     public void addComment(NewCommentDto newComment) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(newComment.getUserId());
         if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
         Optional<Issue> issueOptional = issueRepository.findById(newComment.getIssueId());
         if (!issueOptional.isPresent()) {
@@ -69,7 +69,7 @@ public class CommentService {
 
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
         Optional<Comment> commentOptional = commentRepository.findByIdAndAuthorId(commentId, userId);
         if (commentOptional.isPresent()) {
@@ -83,7 +83,7 @@ public class CommentService {
     public boolean updateComment(Long userId, CommentDto comment) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
         Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
         if (!commentOptional.isPresent()) {

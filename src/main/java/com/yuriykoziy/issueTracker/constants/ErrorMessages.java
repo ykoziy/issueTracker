@@ -1,7 +1,7 @@
 package com.yuriykoziy.issueTracker.constants;
 
 public class ErrorMessages {
-    public static final String userNotFound = "no user found";
+    public static final String NO_USER_FOUND = "no user found";
     public static final String ISSUE_NOT_FOUND = "no issue found";
     public static final String INVALID_EMAIL = "email not valid";
     public static final String EMAIL_TAKEN = "email already taken";

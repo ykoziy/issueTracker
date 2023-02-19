@@ -30,24 +30,28 @@ public class IssueService {
     private final UserProfileRepository userProfileRepository;
 
     public List<IssueDto> findAll() {
-        return issueRepository.findAll().stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+        return issueRepository.findAll().stream().map(issue -> modelMapper.map(issue, IssueDto.class))
+                .collect(Collectors.toList());
     }
 
     public List<IssueDto> findOpenedByUser(Long userId) {
-        return issueRepository.findAllByCreatorId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+        return issueRepository.findAllByCreatorId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class))
+                .collect(Collectors.toList());
     }
 
     public List<IssueDto> findClosedByUser(Long userId) {
-        return issueRepository.findAllByCloserId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+        return issueRepository.findAllByCloserId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class))
+                .collect(Collectors.toList());
     }
 
-
     public List<IssueDto> findByPriority(IssuePriority issuePriority) {
-        return issueRepository.findAllByPriority(issuePriority).stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+        return issueRepository.findAllByPriority(issuePriority).stream()
+                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
     }
 
     public List<IssueDto> findByStatus(IssueStatus issueStatus) {
-        return issueRepository.findAllByStatus(issueStatus).stream().map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+        return issueRepository.findAllByStatus(issueStatus).stream()
+                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
     }
 
     public IssueDto findById(Long issueId) {
@@ -60,9 +64,9 @@ public class IssueService {
 
     @Transactional
     public void addNewIssue(NewIssueDto newIssueDto) {
-        Optional<UserProfile> userOptional  = userProfileRepository.findById(newIssueDto.getUserId());
+        Optional<UserProfile> userOptional = userProfileRepository.findById(newIssueDto.getUserId());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new IllegalStateException(ErrorMessages.NO_USER_FOUND);
         }
         Issue newIssue = new Issue();
         modelMapper.map(newIssueDto, newIssue);
@@ -94,9 +98,9 @@ public class IssueService {
         if (!issue.getCreator().getId().equals(closeIssueDto.getUserId())) {
             throw new IllegalStateException(ErrorMessages.NO_USER_ISSUE_FOUND);
         }
-        Optional<UserProfile> userOptional  = userProfileRepository.findById(closeIssueDto.getUserId());
+        Optional<UserProfile> userOptional = userProfileRepository.findById(closeIssueDto.getUserId());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new IllegalStateException(ErrorMessages.NO_USER_FOUND);
         }
         issue.setResolution(closeIssueDto.getResolution());
         issue.setClosedOn(LocalDateTime.now());
@@ -117,7 +121,7 @@ public class IssueService {
 
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new IllegalStateException(ErrorMessages.NO_USER_FOUND);
         }
 
         Optional<Issue> issueOptional = issueRepository.findByIdAndCreatorId(issueId, userId);
