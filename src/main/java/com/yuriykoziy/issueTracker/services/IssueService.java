@@ -111,6 +111,32 @@ public class IssueService {
         issue.setCloser(userOptional.get());
     }
 
+    public boolean updateIssue(Long userId, IssueDto issue) {
+        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
+        }
+        Optional<Issue> issueOptional = issueRepository.findById(issue.getId());
+        if (!issueOptional.isPresent()) {
+            throw new IssueException(ErrorMessages.ISSUE_NOT_FOUND);
+        }
+        Issue editIssue = issueOptional.get();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+            modelMapper.map(issue, editIssue);
+            editIssue.setUpdatedOn(LocalDateTime.now());
+            issueRepository.save(editIssue);
+            return true;
+        }
+        if (!editIssue.getCreator().getId().equals(userId)) {
+            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+        }
+        modelMapper.map(issue, editIssue);
+        editIssue.setUpdatedOn(LocalDateTime.now());
+        issueRepository.save(editIssue);
+        return true;
+    }
+
     @Transactional
     public Long deleteIssue(Long userId, Long issueId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

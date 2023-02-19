@@ -21,13 +21,14 @@ public class IssueController {
     private final IssueService issueService;
 
     @GetMapping
-    public List<IssueDto> getAll()
-    {
+    public List<IssueDto> getAll() {
         return issueService.findAll();
     }
 
     @GetMapping("/{id}")
-    public IssueDto findIssueById(@PathVariable("id") Long id) {return issueService.findById(id);}
+    public IssueDto findIssueById(@PathVariable("id") Long id) {
+        return issueService.findById(id);
+    }
 
     @GetMapping(value = "/open", params = "id")
     public List<IssueDto> findIssuesOpenedById(@RequestParam Long id) {
@@ -57,6 +58,11 @@ public class IssueController {
     @PostMapping("/close")
     public void closeIssue(@RequestBody CloseIssueDto closeIssueDto) {
         issueService.closeIssue(closeIssueDto);
+    }
+
+    @PostMapping("/edit")
+    public boolean userUpdateIssue(@RequestParam Long userId, @RequestBody IssueDto issue) {
+        return issueService.updateIssue(userId, issue);
     }
 
     @DeleteMapping()
