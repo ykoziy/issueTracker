@@ -11,6 +11,7 @@ import com.yuriykoziy.issueTracker.controllers.auth.AuthenticationRequest;
 import com.yuriykoziy.issueTracker.controllers.auth.AuthenticationResponse;
 import com.yuriykoziy.issueTracker.dto.RegistrationDto;
 import com.yuriykoziy.issueTracker.enums.UserRole;
+import com.yuriykoziy.issueTracker.exceptions.UserAlreadyExistException;
 import com.yuriykoziy.issueTracker.models.UserProfile;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import com.yuriykoziy.issueTracker.security.jwt.JwtService;
@@ -49,11 +50,11 @@ public class AuthService {
             .isPresent();
 
       if (userEmailExists) {
-         throw new IllegalStateException(ErrorMessages.EMAIL_TAKEN);
+         throw new UserAlreadyExistException(ErrorMessages.EMAIL_TAKEN);
       }
 
       if (userNameExists) {
-         throw new IllegalStateException(ErrorMessages.USERNAME_TAKEN);
+         throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
       }
 
       userProfileRepository.save(userProfile);

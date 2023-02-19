@@ -3,6 +3,7 @@ package com.yuriykoziy.issueTracker.services;
 import com.yuriykoziy.issueTracker.constants.ErrorMessages;
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
+import com.yuriykoziy.issueTracker.exceptions.UserNotFoundException;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.models.Issue;
 import com.yuriykoziy.issueTracker.models.UserProfile;
@@ -34,7 +35,7 @@ public class CommentService {
     public void addComment(NewCommentDto newComment) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(newComment.getUserId());
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.userNotFound);
         }
         Optional<Issue> issueOptional = issueRepository.findById(newComment.getIssueId());
         if (!issueOptional.isPresent()) {
@@ -68,7 +69,7 @@ public class CommentService {
 
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.userNotFound);
         }
         Optional<Comment> commentOptional = commentRepository.findByIdAndAuthorId(commentId, userId);
         if (commentOptional.isPresent()) {
@@ -82,7 +83,7 @@ public class CommentService {
     public boolean updateComment(Long userId, CommentDto comment) {
         Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException(ErrorMessages.userNotFound);
+            throw new UserNotFoundException(ErrorMessages.userNotFound);
         }
         Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
         if (!commentOptional.isPresent()) {
