@@ -41,13 +41,19 @@ public class IssueController {
     }
 
     @GetMapping(params = "status")
-    public List<IssueDto> filterByStatus(@RequestParam IssueStatus status) {
-        return issueService.findByStatus(status);
+    public List<IssueDto> filterByStatus(@RequestParam String status) {
+        return issueService.findByStatus(IssueStatus.valueOf(status.toUpperCase()));
     }
 
     @GetMapping(params = "priority")
-    public List<IssueDto> filterByPriority(@RequestParam IssuePriority priority) {
-        return issueService.findByPriority(priority);
+    public List<IssueDto> filterByPriority(@RequestParam String priority) {
+        return issueService.findByPriority(IssuePriority.valueOf(priority.toUpperCase()));
+    }
+
+    @GetMapping(value = "/filter")
+    public List<IssueDto> filterByStatusAndPriority(@RequestParam String status, @RequestParam String priority) {
+        return issueService.findByStatusAndPriority(IssueStatus.valueOf(status.toUpperCase()),
+                IssuePriority.valueOf(priority.toUpperCase()));
     }
 
     @PostMapping

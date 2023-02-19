@@ -56,6 +56,11 @@ public class IssueService {
                 .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
     }
 
+    public List<IssueDto> findByStatusAndPriority(IssueStatus issueStatus, IssuePriority issuePriority) {
+        return issueRepository.findByStatusAndPriority(issueStatus, issuePriority).stream()
+                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+    }
+
     public IssueDto findById(Long issueId) {
         Optional<Issue> issueOptional = issueRepository.findById(issueId);
         if (!issueOptional.isPresent()) {

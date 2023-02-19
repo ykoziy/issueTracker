@@ -45,6 +45,8 @@ public class InitData implements ApplicationRunner {
         Issue b = new Issue("An issue #2", "some low priority issue", IssuePriority.HIGH, userA);
         Issue d = new Issue("Some resolved issue", "this issue is already resolved", IssuePriority.MEDIUM,
                 IssueStatus.CLOSED, userB);
+        Issue e = new Issue("Some wip issue", "this issue is in progress", IssuePriority.MEDIUM,
+                IssueStatus.WIP, userB);
         d.setResolution("An easy fix, just fixed spelling");
         d.setCloser(userB);
         d.setClosedOn(LocalDateTime.now());
@@ -52,6 +54,7 @@ public class InitData implements ApplicationRunner {
         issueRepository.save(b);
         issueRepository.save(c);
         issueRepository.save(d);
+        issueRepository.save(e);
 
         Comment parent = new Comment(userA, "Any input guys?", a);
         Comment p1 = new Comment(userB, "Nice find, I did notice the same issue!", a);
