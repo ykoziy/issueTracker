@@ -10,8 +10,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @CrossOrigin
@@ -21,8 +24,19 @@ public class IssueController {
     private final IssueService issueService;
 
     @GetMapping
-    public List<IssueDto> getAll() {
-        return issueService.findAll();
+    public Map<String, Object> getAll(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<IssueDto> issuePage = issueService.findAll(page, size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -31,29 +45,82 @@ public class IssueController {
     }
 
     @GetMapping(value = "/open", params = "id")
-    public List<IssueDto> findIssuesOpenedById(@RequestParam Long id) {
-        return issueService.findOpenedByUser(id);
+    public Map<String, Object> findIssuesOpenedById(@RequestParam Long id, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<IssueDto> issuePage = issueService.findOpenedByUser(id, page, size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @GetMapping(value = "/closed", params = "id")
-    public List<IssueDto> findIssuesClosedById(@RequestParam Long id) {
-        return issueService.findClosedByUser(id);
+    public Map<String, Object> findIssuesClosedById(@RequestParam Long id, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<IssueDto> issuePage = issueService.findClosedByUser(id, page, size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @GetMapping(params = "status")
-    public List<IssueDto> filterByStatus(@RequestParam String status) {
-        return issueService.findByStatus(IssueStatus.valueOf(status.toUpperCase()));
+    public Map<String, Object> filterByStatus(@RequestParam String status, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<IssueDto> issuePage = issueService.findByStatus(IssueStatus.valueOf(status.toUpperCase()), page, size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @GetMapping(params = "priority")
-    public List<IssueDto> filterByPriority(@RequestParam String priority) {
-        return issueService.findByPriority(IssuePriority.valueOf(priority.toUpperCase()));
+    public Map<String, Object> filterByPriority(@RequestParam String priority,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<IssueDto> issuePage = issueService.findByPriority(IssuePriority.valueOf(priority.toUpperCase()), page,
+                size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @GetMapping(value = "/filter")
-    public List<IssueDto> filterByStatusAndPriority(@RequestParam String status, @RequestParam String priority) {
-        return issueService.findByStatusAndPriority(IssueStatus.valueOf(status.toUpperCase()),
-                IssuePriority.valueOf(priority.toUpperCase()));
+    public Map<String, Object> filterByStatusAndPriority(@RequestParam String status, @RequestParam String priority,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<IssueDto> issuePage = issueService.findByStatusAndPriority(IssueStatus.valueOf(status.toUpperCase()),
+                IssuePriority.valueOf(priority.toUpperCase()), page, size);
+        List<IssueDto> issues = issuePage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("issues", issues);
+        response.put("number", issuePage.getNumber());
+        response.put("totalElements", issuePage.getTotalElements());
+        response.put("totalPages", issuePage.getTotalPages());
+        response.put("size", issuePage.getSize());
+        return response;
     }
 
     @PostMapping

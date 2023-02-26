@@ -33,7 +33,8 @@ public class InitData implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         String pwd = passwordEncoder.encode("password");
         UserProfile userA = new UserProfile("Bob", "Smith", "bob@example.com", "bsmith765", pwd, UserRole.USER);
-        UserProfile userB = new UserProfile("Alice", "Doe", "alice.doe@example.com", "darmouse", pwd, UserRole.USER);
+        UserProfile userB = new UserProfile("Alice", "Doe", "alice.doe@example.com", "darmouse", pwd,
+                UserRole.USER);
         UserProfile userC = new UserProfile("Thomas", "Anderson", "thomas.anderson@example.com", "Neo", pwd,
                 UserRole.ADMIN);
         userProfileRepository.save(userA);
@@ -62,5 +63,9 @@ public class InitData implements ApplicationRunner {
         commentRepository.save(parent);
         commentRepository.save(p1);
         commentRepository.save(p2);
+
+        for (int i = 10; i <= 100; i++) {
+            issueRepository.save(new Issue("An issue #" + i, "some low priority issue", userA));
+        }
     }
 }

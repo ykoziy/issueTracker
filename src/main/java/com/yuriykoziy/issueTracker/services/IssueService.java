@@ -14,15 +14,16 @@ import com.yuriykoziy.issueTracker.repositories.IssueRepository;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,34 +32,41 @@ public class IssueService {
     private final ModelMapper modelMapper;
     private final UserProfileRepository userProfileRepository;
 
-    public List<IssueDto> findAll() {
-        return issueRepository.findAll().stream().map(issue -> modelMapper.map(issue, IssueDto.class))
-                .collect(Collectors.toList());
+    public Page<IssueDto> findAll(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findAll(paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
-    public List<IssueDto> findOpenedByUser(Long userId) {
-        return issueRepository.findAllByCreatorId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class))
-                .collect(Collectors.toList());
+    public Page<IssueDto> findOpenedByUser(Long userId, int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findAllByCreatorId(userId, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
-    public List<IssueDto> findClosedByUser(Long userId) {
-        return issueRepository.findAllByCloserId(userId).stream().map(issue -> modelMapper.map(issue, IssueDto.class))
-                .collect(Collectors.toList());
+    public Page<IssueDto> findClosedByUser(Long userId, int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findAllByCloserId(userId, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
-    public List<IssueDto> findByPriority(IssuePriority issuePriority) {
-        return issueRepository.findAllByPriority(issuePriority).stream()
-                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+    public Page<IssueDto> findByPriority(IssuePriority issuePriority, int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findAllByPriority(issuePriority, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
-    public List<IssueDto> findByStatus(IssueStatus issueStatus) {
-        return issueRepository.findAllByStatus(issueStatus).stream()
-                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+    public Page<IssueDto> findByStatus(IssueStatus issueStatus, int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findAllByStatus(issueStatus, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
-    public List<IssueDto> findByStatusAndPriority(IssueStatus issueStatus, IssuePriority issuePriority) {
-        return issueRepository.findByStatusAndPriority(issueStatus, issuePriority).stream()
-                .map(issue -> modelMapper.map(issue, IssueDto.class)).collect(Collectors.toList());
+    public Page<IssueDto> findByStatusAndPriority(IssueStatus issueStatus, IssuePriority issuePriority, int page,
+            int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findByStatusAndPriority(issueStatus, issuePriority, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
     public IssueDto findById(Long issueId) {

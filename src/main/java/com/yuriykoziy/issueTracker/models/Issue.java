@@ -1,4 +1,5 @@
 package com.yuriykoziy.issueTracker.models;
+
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
 import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import lombok.*;
@@ -35,7 +36,7 @@ public class Issue {
     private LocalDateTime closedOn;
     private String resolution;
 
-    @OneToMany(mappedBy="issue", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     public Issue(String title, String description, IssuePriority priority, UserProfile creator) {
