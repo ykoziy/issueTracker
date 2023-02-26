@@ -64,6 +64,10 @@ public class InitData implements ApplicationRunner {
         commentRepository.save(p1);
         commentRepository.save(p2);
 
+        for (int i = 0; i <= 50; i++) {
+            commentRepository.save(new Comment(userB, "Nice find, I did notice the same issue!", b));
+        }
+
         for (int i = 10; i <= 100; i++) {
             issueRepository.save(new Issue("An issue #" + i, "some low priority issue", userA));
         }

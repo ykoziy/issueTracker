@@ -13,6 +13,10 @@ import com.yuriykoziy.issueTracker.repositories.IssueRepository;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,16 +50,21 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<CommentDto> getCommentsForIssue(Long issueId) {
-        List<Comment> comments = commentRepository.findAllByIssueId(issueId);
+    public Page<CommentDto> getCommentsForIssue(Long issueId, int page, int size) {
+
+        Pageable paging = PageRequest.of(page, size);
+        Page<Comment> commentPage = commentRepository.findAllByIssueId(issueId, paging);
         List<CommentDto> commentsDto = new ArrayList<>();
-        for (Comment comment : comments) {
+
+        for (Comment comment : commentPage.getContent()) {
             CommentDto dto = new CommentDto();
             modelMapper.map(comment, dto);
             dto.setUsername(comment.getAuthor().getUsername());
             commentsDto.add(dto);
         }
-        return commentsDto;
+
+        return new PageImpl<>(commentsDto, paging,
+                commentPage.getTotalElements());
     }
 
     @Transactional

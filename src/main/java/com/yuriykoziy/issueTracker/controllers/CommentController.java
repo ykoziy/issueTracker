@@ -8,8 +8,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @CrossOrigin
@@ -24,8 +27,18 @@ public class CommentController {
     }
 
     @GetMapping(params = "issueId")
-    public List<CommentDto> getIssueComments(@RequestParam Long issueId) {
-        return commentService.getCommentsForIssue(issueId);
+    public Map<String, Object> getIssueComments(@RequestParam Long issueId, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<CommentDto> commentPage = commentService.getCommentsForIssue(issueId, page, size);
+        List<CommentDto> comments = commentPage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("comments", comments);
+        response.put("number", commentPage.getNumber());
+        response.put("totalElements", commentPage.getTotalElements());
+        response.put("totalPages", commentPage.getTotalPages());
+        response.put("size", commentPage.getSize());
+        return response;
     }
 
     @DeleteMapping()
