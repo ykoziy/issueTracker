@@ -31,6 +31,11 @@ public class UserProfileController {
         return userProfileService.getAllUsers();
     }
 
+    @GetMapping(value = "/users", params = "banned")
+    public List<UserProfileDto> findUsersByBanned(@RequestParam boolean banned) {
+        return userProfileService.getAllUsersByBanned(banned);
+    }
+
     @PostMapping("/ban")
     public boolean banUser(@RequestBody UserProfileDto request) {
         return userProfileService.banUser(request);

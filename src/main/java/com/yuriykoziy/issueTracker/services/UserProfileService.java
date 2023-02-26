@@ -71,6 +71,12 @@ public class UserProfileService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
+    public List<UserProfileDto> getAllUsersByBanned(boolean isEnabled) {
+        return userProfileRepository.findByEnabled(!isEnabled).stream()
+                .map(user -> modelMapper.map(user, UserProfileDto.class))
+                .collect(Collectors.toList());
+    }
+
     public boolean banUser(UserProfileDto user) {
         Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
         if (!userOptional.isPresent()) {
