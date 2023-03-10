@@ -37,9 +37,22 @@ public class InitData implements ApplicationRunner {
                 UserRole.USER);
         UserProfile userC = new UserProfile("Thomas", "Anderson", "thomas.anderson@example.com", "Neo", pwd,
                 UserRole.ADMIN);
+
+        UserProfile userD = new UserProfile("Velma", "Stede", "vstede0@comcast.net", "vstede0", pwd, UserRole.USER);
+        UserProfile userE = new UserProfile("Roderich", "Ricarde", "rricarde1@fda.gov", "rricarde1", pwd,
+                UserRole.USER);
+        UserProfile userF = new UserProfile("Teresina", "Adamowicz", "tadamowicz2@google.com.hk", "tadamowicz2", pwd,
+                UserRole.USER);
+        UserProfile userG = new UserProfile("Annie", "Bissatt", "abissatt3@cocolog-nifty.com", "abissatt3", pwd,
+                UserRole.USER);
         userProfileRepository.save(userA);
         userProfileRepository.save(userB);
         userProfileRepository.save(userC);
+
+        userProfileRepository.save(userD);
+        userProfileRepository.save(userE);
+        userProfileRepository.save(userF);
+        userProfileRepository.save(userG);
 
         Issue a = new Issue("An issue #1", "some low priority issue", userA);
         Issue c = new Issue("An issue with JPA", "there is an issue but it is low priority", userB);
