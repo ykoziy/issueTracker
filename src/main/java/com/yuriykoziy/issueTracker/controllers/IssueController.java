@@ -1,20 +1,31 @@
 package com.yuriykoziy.issueTracker.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.yuriykoziy.issueTracker.constants.ResponseConstants;
 import com.yuriykoziy.issueTracker.dto.issue.CloseIssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.NewIssueDto;
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
 import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import com.yuriykoziy.issueTracker.services.IssueService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import lombok.AllArgsConstructor;
 
 @RestController
 @CrossOrigin
@@ -31,11 +42,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 
@@ -51,11 +62,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 
@@ -66,11 +77,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 
@@ -81,11 +92,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 
@@ -98,11 +109,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 
@@ -115,11 +126,11 @@ public class IssueController {
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("issues", issues);
-        response.put("number", issuePage.getNumber());
-        response.put("totalElements", issuePage.getTotalElements());
-        response.put("totalPages", issuePage.getTotalPages());
-        response.put("size", issuePage.getSize());
+        response.put(ResponseConstants.ISSUES, issues);
+        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
+        response.put(ResponseConstants.SIZE, issuePage.getSize());
         return response;
     }
 

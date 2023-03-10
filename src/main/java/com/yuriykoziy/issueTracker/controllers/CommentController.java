@@ -1,18 +1,27 @@
 package com.yuriykoziy.issueTracker.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.yuriykoziy.issueTracker.constants.ResponseConstants;
 import com.yuriykoziy.issueTracker.dto.comment.CommentDto;
 import com.yuriykoziy.issueTracker.dto.comment.NewCommentDto;
 import com.yuriykoziy.issueTracker.services.CommentService;
+
 import lombok.AllArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 @RestController
 @CrossOrigin
@@ -33,11 +42,11 @@ public class CommentController {
         List<CommentDto> comments = commentPage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("comments", comments);
-        response.put("number", commentPage.getNumber());
-        response.put("totalElements", commentPage.getTotalElements());
-        response.put("totalPages", commentPage.getTotalPages());
-        response.put("size", commentPage.getSize());
+        response.put(ResponseConstants.COMMENTS, comments);
+        response.put(ResponseConstants.NUMBER, commentPage.getNumber());
+        response.put(ResponseConstants.TOTAL_ELEMENTS, commentPage.getTotalElements());
+        response.put(ResponseConstants.TOTAL_PAGES, commentPage.getTotalPages());
+        response.put(ResponseConstants.SIZE, commentPage.getSize());
         return response;
     }
 
