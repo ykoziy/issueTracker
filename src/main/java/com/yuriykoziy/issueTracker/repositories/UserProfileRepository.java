@@ -1,19 +1,19 @@
 package com.yuriykoziy.issueTracker.repositories;
 
-import com.yuriykoziy.issueTracker.models.UserProfile;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.List;
+import com.yuriykoziy.issueTracker.models.UserProfile;
 
-@Repository
 @Transactional(readOnly = true)
-public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+public interface UserProfileRepository extends PagingAndSortingRepository<UserProfile, Long> {
     Optional<UserProfile> findByEmail(String email);
 
     Optional<UserProfile> findByUsername(String username);
 
-    List<UserProfile> findByEnabled(boolean enabled);
+    Page<UserProfile> findByEnabled(boolean enabled, Pageable pageable);
 }

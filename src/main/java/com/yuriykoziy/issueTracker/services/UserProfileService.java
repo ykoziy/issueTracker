@@ -1,10 +1,11 @@
 package com.yuriykoziy.issueTracker.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,6 @@ import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
 
 import lombok.AllArgsConstructor;
 
-// get user related data
 @Service
 @AllArgsConstructor
 public class UserProfileService implements UserDetailsService {
@@ -66,15 +66,17 @@ public class UserProfileService implements UserDetailsService {
         return true;
     }
 
-    public List<UserProfileDto> getAllUsers() {
-        return userProfileRepository.findAll().stream().map(user -> modelMapper.map(user, UserProfileDto.class))
-                .collect(Collectors.toList());
+    public Page<UserProfileDto> getAllUsers(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<UserProfile> usersPage = userProfileRepository.findAll(paging);
+        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
     }
 
-    public List<UserProfileDto> getAllUsersByBanned(boolean isEnabled) {
-        return userProfileRepository.findByEnabled(!isEnabled).stream()
-                .map(user -> modelMapper.map(user, UserProfileDto.class))
-                .collect(Collectors.toList());
+    public Page<UserProfileDto> getAllUsersByBanned(boolean isEnabled, int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<UserProfile> usersPage = userProfileRepository.findByEnabled(!isEnabled, paging);
+        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
+
     }
 
     public boolean banUser(UserProfileDto user) {
