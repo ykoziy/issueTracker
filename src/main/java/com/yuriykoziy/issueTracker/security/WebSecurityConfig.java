@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.yuriykoziy.issueTracker.security.jwt.JwtAuthEntryPoint;
 
 import lombok.AllArgsConstructor;
 
@@ -23,6 +26,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(new JwtAuthEntryPoint()).and()
                 .authorizeRequests()
                 .antMatchers("/api/v*/auth/**").permitAll()
                 .antMatchers("/api/v*/issue/**").hasAnyAuthority("USER", "ADMIN")
