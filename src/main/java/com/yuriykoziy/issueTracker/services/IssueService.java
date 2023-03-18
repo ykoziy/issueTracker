@@ -85,12 +85,8 @@ public class IssueService {
 
     @Transactional
     public void closeIssue(CloseIssueDto closeIssueDto) {
-        Optional<Issue> issueOptional = issueRepository.findById(closeIssueDto.getIssueId());
-        if (!issueOptional.isPresent()) {
-            throw new IssueException(ErrorMessages.ISSUE_NOT_FOUND);
-        }
-
-        Issue issue = issueOptional.get();
+        Issue issue = issueRepository.findById(closeIssueDto.getIssueId())
+                .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
@@ -100,70 +96,65 @@ public class IssueService {
             issue.setUpdatedOn(LocalDateTime.now());
             issue.setStatus(IssueStatus.CLOSED);
             issue.setCloser(adminProfile);
-            return;
+        } else {
+            Long userId = closeIssueDto.getUserId();
+            if (!issue.getCreator().getId().equals(userId)) {
+                throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+            }
+            UserProfile user = userProfileRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
+            issue.setResolution(closeIssueDto.getResolution());
+            issue.setClosedOn(LocalDateTime.now());
+            issue.setUpdatedOn(LocalDateTime.now());
+            issue.setStatus(IssueStatus.CLOSED);
+            issue.setCloser(user);
         }
-
-        if (!issue.getCreator().getId().equals(closeIssueDto.getUserId())) {
-            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
-        }
-        Optional<UserProfile> userOptional = userProfileRepository.findById(closeIssueDto.getUserId());
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
-        }
-        issue.setResolution(closeIssueDto.getResolution());
-        issue.setClosedOn(LocalDateTime.now());
-        issue.setUpdatedOn(LocalDateTime.now());
-        issue.setStatus(IssueStatus.CLOSED);
-        issue.setCloser(userOptional.get());
     }
 
-    public boolean updateIssue(Long userId, IssueDto issue) {
-        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
-        if (!userOptional.isPresent()) {
+    public void updateIssue(Long userId, IssueDto issueDto) {
+        UserProfile user = userProfileRepository.findById(userId).orElse(null);
+        if (user == null) {
             throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
-        Optional<Issue> issueOptional = issueRepository.findById(issue.getId());
-        if (!issueOptional.isPresent()) {
-            throw new IssueException(ErrorMessages.ISSUE_NOT_FOUND);
-        }
-        Issue editIssue = issueOptional.get();
+
+        Issue issue = issueRepository.findById(issueDto.getId())
+                .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            modelMapper.map(issue, editIssue);
-            editIssue.setUpdatedOn(LocalDateTime.now());
-            issueRepository.save(editIssue);
-            return true;
+            modelMapper.map(issueDto, issue);
+            issue.setUpdatedOn(LocalDateTime.now());
+            issueRepository.save(issue);
+        } else {
+            if (!issue.getCreator().getId().equals(userId)) {
+                throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+            }
+            modelMapper.map(issueDto, issue);
+            issue.setUpdatedOn(LocalDateTime.now());
+            issueRepository.save(issue);
         }
-        if (!editIssue.getCreator().getId().equals(userId)) {
-            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
-        }
-        modelMapper.map(issue, editIssue);
-        editIssue.setUpdatedOn(LocalDateTime.now());
-        issueRepository.save(editIssue);
-        return true;
     }
 
     @Transactional
     public Long deleteIssue(Long userId, Long issueId) {
+        Issue issue = issueRepository.findById(issueId)
+                .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            Optional<Issue> issueOptional = issueRepository.findById(issueId);
-            if (issueOptional.isPresent()) {
-                return issueRepository.removeById(issueId);
-            }
-        }
-
-        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
-        }
-
-        Optional<Issue> issueOptional = issueRepository.findByIdAndCreatorId(issueId, userId);
-        if (issueOptional.isPresent()) {
             return issueRepository.removeById(issueId);
         } else {
-            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
-        }
+            UserProfile user = userProfileRepository.findById(userId).orElse(null);
+            if (user == null) {
+                throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
+            }
 
+            if (!issue.getCreator().getId().equals(userId)) {
+                throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+            }
+
+            return issueRepository.removeById(issueId);
+        }
     }
 }

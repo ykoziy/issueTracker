@@ -118,8 +118,8 @@ public class IssueController {
     }
 
     @PostMapping("/edit")
-    public boolean userUpdateIssue(@RequestParam Long userId, @RequestBody IssueDto issue) {
-        return issueService.updateIssue(userId, issue);
+    public void userUpdateIssue(@RequestParam Long userId, @RequestBody IssueDto issue) {
+        issueService.updateIssue(userId, issue);
     }
 
     @DeleteMapping()

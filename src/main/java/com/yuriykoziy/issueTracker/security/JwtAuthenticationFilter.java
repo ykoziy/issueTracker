@@ -1,6 +1,7 @@
 package com.yuriykoziy.issueTracker.security;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -42,8 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if ((userName != null) && SecurityContextHolder.getContext().getAuthentication() == null) {
          UserProfile userProfile = userProfileService.loadUserByUsername(userName);
          if (jwtService.isTokenValid(jwt, userProfile) != null && jwtService.isTokenValid(jwt, userProfile)) {
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userName, null,
-                  userProfile.getAuthorities());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userProfile, null,
+                  userProfile == null ? Collections.emptyList() : userProfile.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
          }
