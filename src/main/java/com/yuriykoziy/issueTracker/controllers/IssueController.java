@@ -3,6 +3,7 @@ package com.yuriykoziy.issueTracker.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.NewIssueDto;
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
 import com.yuriykoziy.issueTracker.enums.IssueStatus;
+import com.yuriykoziy.issueTracker.models.IssueFilterCriteria;
 import com.yuriykoziy.issueTracker.services.IssueService;
 
 import lombok.AllArgsConstructor;
@@ -85,44 +87,15 @@ public class IssueController {
         return response;
     }
 
-    @GetMapping(params = "status")
-    public Map<String, Object> filterByStatus(@RequestParam String status, @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<IssueDto> issuePage = issueService.findByStatus(IssueStatus.valueOf(status.toUpperCase()), page, size);
-        List<IssueDto> issues = issuePage.getContent();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put(ResponseConstants.ISSUES, issues);
-        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
-        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
-        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
-        response.put(ResponseConstants.SIZE, issuePage.getSize());
-        return response;
-    }
-
-    @GetMapping(params = "priority")
-    public Map<String, Object> filterByPriority(@RequestParam String priority,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<IssueDto> issuePage = issueService.findByPriority(IssuePriority.valueOf(priority.toUpperCase()), page,
-                size);
-        List<IssueDto> issues = issuePage.getContent();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put(ResponseConstants.ISSUES, issues);
-        response.put(ResponseConstants.NUMBER, issuePage.getNumber());
-        response.put(ResponseConstants.TOTAL_ELEMENTS, issuePage.getTotalElements());
-        response.put(ResponseConstants.TOTAL_PAGES, issuePage.getTotalPages());
-        response.put(ResponseConstants.SIZE, issuePage.getSize());
-        return response;
-    }
-
     @GetMapping(value = "/filter")
-    public Map<String, Object> filterByStatusAndPriority(@RequestParam String status, @RequestParam String priority,
+    public Map<String, Object> filterBySpecs(
+            IssueFilterCriteria criteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<IssueDto> issuePage = issueService.findByStatusAndPriority(IssueStatus.valueOf(status.toUpperCase()),
-                IssuePriority.valueOf(priority.toUpperCase()), page, size);
+
+        Page<IssueDto> issuePage = issueService.findAllCriteria(criteria.getStatus(), criteria.getPriority(),
+                criteria.getCreatorId(), page, size);
+
         List<IssueDto> issues = issuePage.getContent();
 
         Map<String, Object> response = new HashMap<>();

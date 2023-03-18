@@ -6,11 +6,19 @@ import com.yuriykoziy.issueTracker.models.Issue;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface IssueRepository extends PagingAndSortingRepository<Issue, Long> {
+public interface IssueRepository extends PagingAndSortingRepository<Issue, Long>, JpaSpecificationExecutor<Issue> {
+
+    default Page<Issue> findByCriteria(IssueStatus issueStatus, IssuePriority issuePriority, Long creatorId,
+            Pageable pageable) {
+        Specification<Issue> spec = IssueSpecifications.filterByCriteria(issueStatus, issuePriority, creatorId);
+        return findAll(spec, pageable);
+    }
 
     Page<Issue> findAllByPriority(IssuePriority issuePriority, Pageable pageable);
 

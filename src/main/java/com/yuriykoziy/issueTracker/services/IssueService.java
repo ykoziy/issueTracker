@@ -38,6 +38,18 @@ public class IssueService {
         return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
+    public Page<IssueDto> findAllCriteria(
+            IssueStatus issueStatus,
+            IssuePriority issuePriority,
+            Long creatorId,
+            int page,
+            int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Issue> issuePage = issueRepository.findByCriteria(issueStatus, issuePriority, creatorId, paging);
+        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
+
+    }
+
     public Page<IssueDto> findOpenedByUser(Long userId, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         Page<Issue> issuePage = issueRepository.findAllByCreatorId(userId, paging);
@@ -47,25 +59,6 @@ public class IssueService {
     public Page<IssueDto> findClosedByUser(Long userId, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         Page<Issue> issuePage = issueRepository.findAllByCloserId(userId, paging);
-        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
-    }
-
-    public Page<IssueDto> findByPriority(IssuePriority issuePriority, int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<Issue> issuePage = issueRepository.findAllByPriority(issuePriority, paging);
-        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
-    }
-
-    public Page<IssueDto> findByStatus(IssueStatus issueStatus, int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<Issue> issuePage = issueRepository.findAllByStatus(issueStatus, paging);
-        return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
-    }
-
-    public Page<IssueDto> findByStatusAndPriority(IssueStatus issueStatus, IssuePriority issuePriority, int page,
-            int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<Issue> issuePage = issueRepository.findByStatusAndPriority(issueStatus, issuePriority, paging);
         return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
 
