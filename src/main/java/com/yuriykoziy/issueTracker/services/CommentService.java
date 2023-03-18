@@ -7,6 +7,7 @@ import com.yuriykoziy.issueTracker.exceptions.CommentException;
 import com.yuriykoziy.issueTracker.exceptions.UserNotFoundException;
 import com.yuriykoziy.issueTracker.models.Comment;
 import com.yuriykoziy.issueTracker.models.Issue;
+import com.yuriykoziy.issueTracker.util.CommonUtil;
 import com.yuriykoziy.issueTracker.models.UserProfile;
 import com.yuriykoziy.issueTracker.repositories.CommentRepository;
 import com.yuriykoziy.issueTracker.repositories.IssueRepository;
@@ -38,15 +39,12 @@ public class CommentService {
 
     @Transactional
     public void addComment(NewCommentDto newComment) {
-        Optional<UserProfile> userOptional = userProfileRepository.findById(newComment.getUserId());
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
-        }
-        Optional<Issue> issueOptional = issueRepository.findById(newComment.getIssueId());
-        if (!issueOptional.isPresent()) {
-            throw new CommentException(ErrorMessages.ISSUE_NOT_FOUND);
-        }
-        Comment comment = new Comment(userOptional.get(), newComment.getContent(), issueOptional.get());
+        UserProfile user = userProfileRepository.findById(newComment.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
+        Issue issue = issueRepository.findById(newComment.getIssueId())
+                .orElseThrow(() -> new CommentException(ErrorMessages.ISSUE_NOT_FOUND));
+
+        Comment comment = new Comment(user, newComment.getContent(), issue);
         commentRepository.save(comment);
     }
 
@@ -68,51 +66,39 @@ public class CommentService {
     }
 
     @Transactional
-    public Long deleteComment(Long userId, Long commentId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            Optional<Comment> commentOptional = commentRepository.findById(commentId);
-            if (commentOptional.isPresent()) {
-                return commentRepository.removeById(commentId);
-            }
-        }
-
-        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
-        if (!userOptional.isPresent()) {
+    public void deleteComment(Long userId, Long commentId) {
+        UserProfile user = userProfileRepository.findById(userId).orElse(null);
+        if (user == null) {
             throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
-        Optional<Comment> commentOptional = commentRepository.findByIdAndAuthorId(commentId, userId);
-        if (commentOptional.isPresent()) {
-            return commentRepository.removeById(commentId);
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorMessages.NO_COMMENT_FOUND));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userId)) {
+            commentRepository.removeById(commentId);
         } else {
             throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
         }
-
     }
 
-    public boolean updateComment(Long userId, CommentDto comment) {
-        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
-        if (!userOptional.isPresent()) {
+    public void updateComment(Long userId, CommentDto commentDto) {
+        UserProfile user = userProfileRepository.findById(userId).orElse(null);
+        if (user == null) {
             throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
-        Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
-        if (!commentOptional.isPresent()) {
-            throw new CommentException(ErrorMessages.NO_COMMENT_FOUND);
-        }
-        Comment editComment = commentOptional.get();
+
+        Comment comment = commentRepository.findById(commentDto.getId())
+                .orElseThrow(() -> new CommentException(ErrorMessages.NO_COMMENT_FOUND));
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            modelMapper.map(comment, editComment);
-            editComment.setUpdatedOn(LocalDateTime.now());
-            commentRepository.save(editComment);
-            return true;
-        }
-        if (!editComment.getAuthor().getId().equals(userId)) {
+        if (CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userId)) {
+            modelMapper.map(commentDto, comment);
+            comment.setUpdatedOn(LocalDateTime.now());
+            commentRepository.save(comment);
+        } else {
             throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
         }
-        modelMapper.map(comment, editComment);
-        editComment.setUpdatedOn(LocalDateTime.now());
-        commentRepository.save(editComment);
-        return true;
     }
 }

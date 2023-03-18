@@ -51,16 +51,12 @@ public class CommentController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<Long> userDeleteComment(@RequestParam Long userId, @RequestParam Long commentId) {
-        Long result = commentService.deleteComment(userId, commentId);
-        if (result != 0) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public void userDeleteComment(@RequestParam Long userId, @RequestParam Long commentId) {
+        commentService.deleteComment(userId, commentId);
     }
 
     @PostMapping("/edit")
-    public boolean userUpdateComment(@RequestParam Long userId, @RequestBody CommentDto comment) {
-        return commentService.updateComment(userId, comment);
+    public void userUpdateComment(@RequestParam Long userId, @RequestBody CommentDto comment) {
+        commentService.updateComment(userId, comment);
     }
 }

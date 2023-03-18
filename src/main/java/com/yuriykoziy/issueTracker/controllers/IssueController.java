@@ -123,11 +123,7 @@ public class IssueController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<Long> deleteIssue(@RequestParam Long userId, @RequestParam Long issueId) {
-        Long result = issueService.deleteIssue(userId, issueId);
-        if (result != 0) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public void deleteIssue(@RequestParam Long userId, @RequestParam Long issueId) {
+        issueService.deleteIssue(userId, issueId);
     }
 }
