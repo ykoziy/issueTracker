@@ -22,8 +22,6 @@ import com.yuriykoziy.issueTracker.constants.ResponseConstants;
 import com.yuriykoziy.issueTracker.dto.issue.CloseIssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.NewIssueDto;
-import com.yuriykoziy.issueTracker.enums.IssuePriority;
-import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import com.yuriykoziy.issueTracker.models.IssueFilterCriteria;
 import com.yuriykoziy.issueTracker.services.IssueService;
 
