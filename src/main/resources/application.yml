@@ -15,16 +15,3 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
-
-management:
-  security:
-    enabled: false
-security:
-  basic:
-    enabled: true
-
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        security: DEBUG
