@@ -59,10 +59,7 @@ public class AuthService {
       if (userNameExists) {
          throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
       }
-
-      userProfile.setCreatedOn(LocalDateTime.now());
       userProfileRepository.save(userProfile);
-
       return true;
    }
 

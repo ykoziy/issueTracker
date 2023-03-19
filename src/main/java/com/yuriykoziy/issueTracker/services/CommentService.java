@@ -95,7 +95,6 @@ public class CommentService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userId)) {
             modelMapper.map(commentDto, comment);
-            comment.setUpdatedOn(LocalDateTime.now());
             commentRepository.save(comment);
         } else {
             throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);

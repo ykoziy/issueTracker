@@ -5,6 +5,10 @@ import com.yuriykoziy.issueTracker.enums.IssueStatus;
 import lombok.*;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +32,12 @@ public class Issue {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private UserProfile creator;
-    private LocalDateTime createdOn = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdOn;
     @ManyToOne
     @JoinColumn(name = "closer_id")
     private UserProfile closer;
+    @UpdateTimestamp
     private LocalDateTime updatedOn;
     private LocalDateTime closedOn;
     private String resolution;

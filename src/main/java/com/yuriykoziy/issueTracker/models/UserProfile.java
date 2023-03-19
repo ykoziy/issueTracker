@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,12 +42,14 @@ public class UserProfile implements UserDetails {
     private String username;
     private String email;
     private String password;
-    private LocalDateTime createdOn = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdOn;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = true;
     private LocalDateTime lockedOn;
+    @UpdateTimestamp
     private LocalDateTime updatedOn;
     private LocalDateTime disabledOn;
 

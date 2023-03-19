@@ -1,8 +1,11 @@
 package com.yuriykoziy.issueTracker.models;
 
-
 import lombok.*;
 import javax.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +24,9 @@ public class Comment {
     private UserProfile author;
 
     private String content;
-    private LocalDateTime addedOn = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime addedOn;
+    @UpdateTimestamp
     private LocalDateTime updatedOn;
 
     @ManyToOne()

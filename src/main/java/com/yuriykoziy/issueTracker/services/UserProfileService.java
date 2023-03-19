@@ -56,7 +56,6 @@ public class UserProfileService implements UserDetailsService {
         }
 
         modelMapper.map(user, userProfile);
-        userProfile.setUpdatedOn(LocalDateTime.now());
         userProfileRepository.save(userProfile);
         return true;
     }
