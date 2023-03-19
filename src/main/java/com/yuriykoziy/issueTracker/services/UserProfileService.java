@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -32,36 +33,30 @@ public class UserProfileService implements UserDetailsService {
     }
 
     public UserProfileDto getUserProfileById(Long id) {
-        Optional<UserProfile> userOptional = userProfileRepository.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(String.format(ErrorMessages.USER_ID_NOT_FOUND, id));
-        }
-        UserProfile user = userOptional.get();
+        UserProfile user = userProfileRepository.findById(id)
+                .orElseThrow(
+                        () -> new UserNotFoundException(String.format(ErrorMessages.USER_ID_NOT_FOUND, id)));
         return modelMapper.map(user, UserProfileDto.class);
     }
 
     public boolean updateProfile(UserProfileDto user, Long userId) {
-        Optional<UserProfile> userOptional = userProfileRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
-        }
-        UserProfile userProfile = userOptional.get();
+        UserProfile userProfile = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
 
-        if (!user.getEmail().equals(userProfile.getEmail())) {
-            Optional<UserProfile> checkEmail = userProfileRepository.findByEmail(user.getEmail());
-            if (checkEmail.isPresent()) {
-                throw new UserAlreadyExistException(ErrorMessages.EMAIL_TAKEN);
-            }
+        String newEmail = user.getEmail();
+        String newUsername = user.getUsername();
+
+        if (!newEmail.equals(userProfile.getEmail()) && userProfileRepository.findByEmail(newEmail).isPresent()) {
+            throw new UserAlreadyExistException(ErrorMessages.EMAIL_TAKEN);
         }
 
-        if (!user.getUsername().equals(userProfile.getUsername())) {
-            Optional<UserProfile> checkUsername = userProfileRepository.findByUsername(user.getUsername());
-            if (checkUsername.isPresent()) {
-                throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
-            }
+        if (!newUsername.equals(userProfile.getUsername())
+                && userProfileRepository.findByUsername(newUsername).isPresent()) {
+            throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
         }
 
         modelMapper.map(user, userProfile);
+        userProfile.setUpdatedOn(LocalDateTime.now());
         userProfileRepository.save(userProfile);
         return true;
     }
@@ -80,12 +75,11 @@ public class UserProfileService implements UserDetailsService {
     }
 
     public boolean banUser(UserProfileDto user) {
-        Optional<UserProfile> userOptional = userProfileRepository.findByEmail(user.getEmail());
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
-        }
-        UserProfile userProfile = userOptional.get();
+        UserProfile userProfile = userProfileRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
+
         userProfile.setEnabled(false);
+        userProfile.setDisabledOn(LocalDateTime.now());
         userProfileRepository.save(userProfile);
         return true;
     }

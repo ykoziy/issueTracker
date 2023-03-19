@@ -1,5 +1,6 @@
 package com.yuriykoziy.issueTracker.models;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -39,10 +40,14 @@ public class UserProfile implements UserDetails {
     private String username;
     private String email;
     private String password;
+    private LocalDateTime createdOn = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = true;
+    private LocalDateTime lockedOn;
+    private LocalDateTime updatedOn;
+    private LocalDateTime disabledOn;
 
     public UserProfile(String firstName, String lastName, String email, String username, String password,
             UserRole userRole) {

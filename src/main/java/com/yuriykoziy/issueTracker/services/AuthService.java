@@ -1,5 +1,7 @@
 package com.yuriykoziy.issueTracker.services;
 
+import java.time.LocalDateTime;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -58,6 +60,7 @@ public class AuthService {
          throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
       }
 
+      userProfile.setCreatedOn(LocalDateTime.now());
       userProfileRepository.save(userProfile);
 
       return true;
