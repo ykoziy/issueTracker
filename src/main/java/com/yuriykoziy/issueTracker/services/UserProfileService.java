@@ -74,6 +74,17 @@ public class UserProfileService implements UserDetailsService {
 
     }
 
+    public Page<UserProfileDto> findAllCriteria(
+            Boolean enabled,
+            Boolean locked,
+            int page,
+            int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<UserProfile> usersPage = userProfileRepository.findByCriteria(enabled, locked, paging);
+        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
+
+    }
+
     public boolean banUser(UserProfileDto user) {
         UserProfile userProfile = userProfileRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yuriykoziy.issueTracker.constants.ResponseConstants;
 import com.yuriykoziy.issueTracker.dto.UserProfileDto;
+import com.yuriykoziy.issueTracker.models.UserFilterCriteria;
 import com.yuriykoziy.issueTracker.services.UserProfileService;
 
 import lombok.AllArgsConstructor;
@@ -51,11 +52,14 @@ public class UserProfileController {
         return response;
     }
 
-    @GetMapping(value = "/users", params = "banned")
-    public Map<String, Object> findUsersByBanned(@RequestParam boolean banned,
+    @GetMapping(value = "/filter")
+    public Map<String, Object> filterBySpecs(
+            UserFilterCriteria criteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<UserProfileDto> userPage = userProfileService.getAllUsersByBanned(banned, page, size);
+
+        Page<UserProfileDto> userPage = userProfileService.findAllCriteria(criteria.getEnabled(), criteria.getLocked(),
+                page, size);
         List<UserProfileDto> users = userPage.getContent();
         Map<String, Object> response = new HashMap<>();
         response.put(ResponseConstants.USERS, users);
