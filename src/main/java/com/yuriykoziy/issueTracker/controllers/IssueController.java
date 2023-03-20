@@ -92,7 +92,7 @@ public class IssueController {
             @RequestParam(defaultValue = "5") int size) {
 
         Page<IssueDto> issuePage = issueService.findAllCriteria(criteria.getStatus(), criteria.getPriority(),
-                criteria.getCreatorId(), page, size);
+                criteria.getCreatorId(), page, size, criteria.getOrder());
 
         List<IssueDto> issues = issuePage.getContent();
 

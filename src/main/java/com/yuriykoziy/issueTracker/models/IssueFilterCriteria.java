@@ -25,6 +25,7 @@ public class IssueFilterCriteria {
   private IssuePriority priority;
   @Nullable
   private Long creatorId;
+  private String order = "";
 
   public void setStatus(String status) {
     this.status = Optional.ofNullable(status)

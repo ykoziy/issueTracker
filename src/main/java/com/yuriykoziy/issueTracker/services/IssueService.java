@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +36,9 @@ public class IssueService {
     private final UserProfileRepository userProfileRepository;
 
     public Page<IssueDto> findAll(int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "updatedOn", "createdOn");
+        Pageable paging = PageRequest.of(page, size, sort);
         Page<Issue> issuePage = issueRepository.findAll(paging);
         return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
     }
@@ -45,11 +48,13 @@ public class IssueService {
             IssuePriority issuePriority,
             Long creatorId,
             int page,
-            int size) {
-        Pageable paging = PageRequest.of(page, size);
+            int size,
+            String sortOrder) {
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "updatedOn", "createdOn");
+        Pageable paging = PageRequest.of(page, size, sort);
         Page<Issue> issuePage = issueRepository.findByCriteria(issueStatus, issuePriority, creatorId, paging);
         return issuePage.map(issue -> modelMapper.map(issue, IssueDto.class));
-
     }
 
     public Page<IssueDto> findOpenedByUser(Long userId, int page, int size) {
@@ -104,7 +109,6 @@ public class IssueService {
         }
         issue.setResolution(closeIssueDto.getResolution());
         issue.setClosedOn(LocalDateTime.now());
-        issue.setUpdatedOn(LocalDateTime.now());
         issue.setStatus(IssueStatus.CLOSED);
         issue.setCloser(closer);
     }
@@ -121,7 +125,6 @@ public class IssueService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (CommonUtil.isAdmin(auth) || issue.getCreator().getId().equals(userId)) {
             modelMapper.map(issueDto, issue);
-            issue.setUpdatedOn(LocalDateTime.now());
             issueRepository.save(issue);
         } else {
             throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
