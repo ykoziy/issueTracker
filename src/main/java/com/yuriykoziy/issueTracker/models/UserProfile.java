@@ -52,6 +52,7 @@ public class UserProfile implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedOn;
     private LocalDateTime disabledOn;
+    private int failedLoginAttempts;
 
     public UserProfile(String firstName, String lastName, String email, String username, String password,
             UserRole userRole) {
@@ -93,5 +94,9 @@ public class UserProfile implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void incrementFailedLoginAttempts() {
+        this.failedLoginAttempts++;
     }
 }

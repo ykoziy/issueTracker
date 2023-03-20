@@ -1,8 +1,7 @@
 package com.yuriykoziy.issueTracker.services;
 
-import java.time.LocalDateTime;
-
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +28,8 @@ public class AuthService {
    private final AuthenticationManager authenticationManager;
    private final UserProfileRepository userProfileRepository;
    private final PasswordEncoder passwordEncoder;
+
+   private static final int MAX_ATTEMPTS = 3;
 
    public boolean register(RegistrationDto request) {
       boolean isValidEmail = emailValidator.test(request.getEmail());
@@ -64,13 +65,34 @@ public class AuthService {
    }
 
    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-      authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                  request.getUsername(),
-                  request.getPassword()));
       UserProfile user = userProfileRepository.findByUsername(request.getUsername()).orElseThrow(
             () -> new UsernameNotFoundException("Error, no user found"));
+
+      int failedAttempts = user.getFailedLoginAttempts();
+      if (failedAttempts >= 3) {
+         throw new RuntimeException("Your account has been locked. Please contact support.");
+      }
+
+      try {
+         authenticationManager.authenticate(
+               new UsernamePasswordAuthenticationToken(
+                     request.getUsername(),
+                     request.getPassword()));
+         user.setFailedLoginAttempts(0);
+         userProfileRepository.save(user);
+      } catch (BadCredentialsException e) {
+         failedAttempts++;
+         user.setFailedLoginAttempts(failedAttempts);
+         userProfileRepository.save(user);
+         if (failedAttempts >= MAX_ATTEMPTS) {
+            user.setLocked(true);
+            userProfileRepository.save(user);
+         }
+         throw new BadCredentialsException("Invalid username or password.");
+      }
+
       String jwtToken = jwtService.generateToken(user);
       return new AuthenticationResponse(jwtToken);
    }
+
 }
