@@ -93,4 +93,15 @@ public class UserProfileService implements UserDetailsService {
         userProfileRepository.save(userProfile);
         return true;
     }
+
+    public boolean unlockUser(UserProfileDto user) {
+        UserProfile userProfile = userProfileRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
+
+        userProfile.setLocked(false);
+        userProfile.setFailedLoginAttempts(0);
+        userProfile.setLockedOn(null);
+        userProfileRepository.save(userProfile);
+        return true;
+    }
 }

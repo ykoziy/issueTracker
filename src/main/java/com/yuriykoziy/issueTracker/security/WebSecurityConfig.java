@@ -28,6 +28,7 @@ public class WebSecurityConfig {
                 .cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(new JwtAuthEntryPoint()).and()
                 .authorizeRequests()
+                .antMatchers("/api/v*/profile/unlock").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v*/profile/ban").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v*/auth/**").permitAll()
                 .antMatchers("/api/v*/issue/**").hasAnyAuthority("USER", "ADMIN")

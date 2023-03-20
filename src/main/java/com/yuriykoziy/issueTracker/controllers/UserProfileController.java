@@ -75,4 +75,9 @@ public class UserProfileController {
         return userProfileService.banUser(request);
     }
 
+    @PostMapping("/unlock")
+    public boolean unlockUser(@RequestBody UserProfileDto request) {
+        return userProfileService.unlockUser(request);
+    }
+
 }

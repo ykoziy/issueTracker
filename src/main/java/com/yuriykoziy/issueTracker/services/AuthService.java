@@ -1,5 +1,7 @@
 package com.yuriykoziy.issueTracker.services;
 
+import java.time.LocalDateTime;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -70,7 +72,7 @@ public class AuthService {
 
       int failedAttempts = user.getFailedLoginAttempts();
       if (failedAttempts >= 3) {
-         throw new RuntimeException("Your account has been locked. Please contact support.");
+         throw new BadCredentialsException("Invalid username or password.");
       }
 
       try {
@@ -86,6 +88,7 @@ public class AuthService {
          userProfileRepository.save(user);
          if (failedAttempts >= MAX_ATTEMPTS) {
             user.setLocked(true);
+            user.setLockedOn(LocalDateTime.now());
             userProfileRepository.save(user);
          }
          throw new BadCredentialsException("Invalid username or password.");
