@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
@@ -49,8 +50,9 @@ public class CommentService {
     }
 
     public Page<CommentDto> getCommentsForIssue(Long issueId, int page, int size) {
-
-        Pageable paging = PageRequest.of(page, size);
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "updatedOn", "addedOn");
+        Pageable paging = PageRequest.of(page, size, sort);
         Page<Comment> commentPage = commentRepository.findAllByIssueId(issueId, paging);
         List<CommentDto> commentsDto = new ArrayList<>();
 
