@@ -39,8 +39,8 @@ public class UserProfileService implements UserDetailsService {
         return modelMapper.map(user, UserProfileDto.class);
     }
 
-    public boolean updateProfile(UserProfileDto user, Long userId) {
-        UserProfile userProfile = userProfileRepository.findById(userId)
+    public void updateProfile(Long id, UserProfileDto user) {
+        UserProfile userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
 
         String newEmail = user.getEmail();
@@ -57,20 +57,6 @@ public class UserProfileService implements UserDetailsService {
 
         modelMapper.map(user, userProfile);
         userProfileRepository.save(userProfile);
-        return true;
-    }
-
-    public Page<UserProfileDto> getAllUsers(int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<UserProfile> usersPage = userProfileRepository.findAll(paging);
-        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
-    }
-
-    public Page<UserProfileDto> getAllUsersByBanned(boolean isEnabled, int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<UserProfile> usersPage = userProfileRepository.findByEnabled(!isEnabled, paging);
-        return usersPage.map(user -> modelMapper.map(user, UserProfileDto.class));
-
     }
 
     public Page<UserProfileDto> findAllCriteria(
@@ -84,17 +70,16 @@ public class UserProfileService implements UserDetailsService {
 
     }
 
-    public boolean banUser(UserProfileDto user) {
+    public void banUser(UserProfileDto user) {
         UserProfile userProfile = userProfileRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
 
         userProfile.setEnabled(false);
         userProfile.setDisabledOn(LocalDateTime.now());
         userProfileRepository.save(userProfile);
-        return true;
     }
 
-    public boolean unlockUser(UserProfileDto user) {
+    public void unlockUser(UserProfileDto user) {
         UserProfile userProfile = userProfileRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
 
@@ -102,6 +87,5 @@ public class UserProfileService implements UserDetailsService {
         userProfile.setFailedLoginAttempts(0);
         userProfile.setLockedOn(null);
         userProfileRepository.save(userProfile);
-        return true;
     }
 }
