@@ -1,5 +1,7 @@
 package com.yuriykoziy.issueTracker.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.yuriykoziy.issueTracker.security.jwt.JwtAuthEntryPoint;
 
@@ -31,7 +36,7 @@ public class WebSecurityConfig {
                 .antMatchers("/api/v*/profile/unlock").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v*/profile/ban").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v*/auth/**").permitAll()
-                .antMatchers("/api/v*/issue/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/api/v*/issues/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/api/v*/comment/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/api/v*/profile/**").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()

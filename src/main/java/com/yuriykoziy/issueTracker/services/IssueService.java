@@ -1,7 +1,6 @@
 package com.yuriykoziy.issueTracker.services;
 
 import com.yuriykoziy.issueTracker.constants.ErrorMessages;
-import com.yuriykoziy.issueTracker.dto.issue.CloseIssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.IssueDto;
 import com.yuriykoziy.issueTracker.dto.issue.NewIssueDto;
 import com.yuriykoziy.issueTracker.enums.IssuePriority;
@@ -91,62 +90,63 @@ public class IssueService {
     }
 
     @Transactional
-    public void closeIssue(CloseIssueDto closeIssueDto) {
-        Issue issue = issueRepository.findById(closeIssueDto.getIssueId())
+    public void closeIssue(Long issueId, String resolutionMessage) {
+        Issue issue = issueRepository.findById(issueId)
                 .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserProfile closer;
-        if (CommonUtil.isAdmin(auth)) {
-            closer = (UserProfile) auth.getPrincipal();
-        } else {
-            Long userId = closeIssueDto.getUserId();
-            closer = userProfileRepository.findById(userId)
-                    .orElseThrow(() -> new UserNotFoundException(ErrorMessages.NO_USER_FOUND));
-            if (!issue.getCreator().getId().equals(userId)) {
-                throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
-            }
+        UserProfile closer = (UserProfile) auth.getPrincipal();
+        String username = auth.getName();
+
+        if (!CommonUtil.isAdmin(auth) && !issue.getCreator().getUsername().equals(username)) {
+            throw new IssueException("User is not authorized to close this issue");
         }
-        issue.setResolution(closeIssueDto.getResolution());
+
+        issue.setResolution(resolutionMessage);
         issue.setClosedOn(LocalDateTime.now());
         issue.setStatus(IssueStatus.CLOSED);
         issue.setCloser(closer);
     }
 
-    public void updateIssue(Long userId, IssueDto issueDto) {
-        UserProfile user = userProfileRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
+    public void updateIssue(IssueDto issueDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Optional<UserProfile> userOptional = userProfileRepository.findByUsername(username);
+
+        if (!userOptional.isPresent()) {
+            throw new IssueException(ErrorMessages.NO_USER_FOUND);
         }
 
         Issue issue = issueRepository.findById(issueDto.getId())
                 .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (CommonUtil.isAdmin(auth) || issue.getCreator().getId().equals(userId)) {
-            modelMapper.map(issueDto, issue);
-            issueRepository.save(issue);
-        } else {
-            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+        if (!(CommonUtil.isAdmin(auth) || issue.getCreator().getUsername().equals(username))) {
+            throw new IssueException("User is not authorized to update this issue");
         }
+
+        modelMapper.map(issueDto, issue);
+        issueRepository.save(issue);
     }
 
     @Transactional
-    public void deleteIssue(Long userId, Long issueId) {
-        UserProfile user = userProfileRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
+    public void deleteIssue(Long issueId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Optional<UserProfile> userOptional = userProfileRepository.findByUsername(username);
+
+        if (!userOptional.isPresent()) {
+            throw new IssueException(ErrorMessages.NO_USER_FOUND);
         }
 
         Issue issue = issueRepository.findById(issueId)
                 .orElseThrow(() -> new IssueException(ErrorMessages.ISSUE_NOT_FOUND));
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (CommonUtil.isAdmin(auth) || issue.getCreator().getId().equals(userId)) {
-            issueRepository.removeById(issueId);
-        } else {
-            throw new IssueException(ErrorMessages.NO_USER_ISSUE_FOUND);
+        if (!(CommonUtil.isAdmin(auth) || issue.getCreator().getUsername().equals(username))) {
+            throw new IssueException("User is not authorized to delete this issue");
         }
+
+        issueRepository.removeById(issueId);
     }
 }
