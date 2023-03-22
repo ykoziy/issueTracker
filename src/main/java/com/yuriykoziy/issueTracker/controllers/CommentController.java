@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,20 +26,20 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @CrossOrigin
-@RequestMapping(path = "api/v1/comment")
+@RequestMapping(path = "api/v1")
 @AllArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping
+    @PostMapping(path = "/comments")
     public void addNewComment(@RequestBody NewCommentDto newComment) {
         commentService.addComment(newComment);
     }
 
-    @GetMapping(params = "issueId")
-    public Map<String, Object> getIssueComments(@RequestParam Long issueId, @RequestParam(defaultValue = "0") int page,
+    @GetMapping(path = "/issues/{id}/comments")
+    public Map<String, Object> getIssueComments(@PathVariable Long id, @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<CommentDto> commentPage = commentService.getCommentsForIssue(issueId, page, size);
+        Page<CommentDto> commentPage = commentService.getCommentsForIssue(id, page, size);
         List<CommentDto> comments = commentPage.getContent();
 
         Map<String, Object> response = new HashMap<>();
@@ -50,13 +51,13 @@ public class CommentController {
         return response;
     }
 
-    @DeleteMapping()
-    public void userDeleteComment(@RequestParam Long userId, @RequestParam Long commentId) {
-        commentService.deleteComment(userId, commentId);
+    @DeleteMapping(path = "/comments/{id}")
+    public void userDeleteComment(@PathVariable Long id) {
+        commentService.deleteComment(id);
     }
 
-    @PostMapping("/edit")
-    public void userUpdateComment(@RequestParam Long userId, @RequestBody CommentDto comment) {
-        commentService.updateComment(userId, comment);
+    @PutMapping(path = "/comments")
+    public void userUpdateComment(@RequestBody CommentDto comment) {
+        commentService.updateComment(comment);
     }
 }

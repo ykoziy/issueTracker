@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,25 +67,28 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long userId, Long commentId) {
-        UserProfile user = userProfileRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
+    public void deleteComment(Long commentId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Optional<UserProfile> userOptional = userProfileRepository.findByUsername(username);
+
+        if (!userOptional.isPresent()) {
+            throw new CommentException(ErrorMessages.NO_USER_FOUND);
         }
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(ErrorMessages.NO_COMMENT_FOUND));
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userId)) {
-            commentRepository.removeById(commentId);
-        } else {
-            throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
+        if (!(CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userOptional.get().getId()))) {
+            throw new CommentException("User is not authorized to delete this issue");
         }
+        commentRepository.removeById(commentId);
     }
 
-    public void updateComment(Long userId, CommentDto commentDto) {
-        UserProfile user = userProfileRepository.findById(userId).orElse(null);
+    @Transactional
+    public void updateComment(CommentDto commentDto) {
+        UserProfile user = userProfileRepository.findById(commentDto.getId()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException(ErrorMessages.NO_USER_FOUND);
         }
@@ -95,11 +97,10 @@ public class CommentService {
                 .orElseThrow(() -> new CommentException(ErrorMessages.NO_COMMENT_FOUND));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(userId)) {
-            modelMapper.map(commentDto, comment);
-            commentRepository.save(comment);
-        } else {
-            throw new CommentException(ErrorMessages.NO_USER_COMMENT_FOUND);
+
+        if (!(CommonUtil.isAdmin(auth) || comment.getAuthor().getId().equals(user.getId()))) {
+            throw new CommentException("User is not authorized to edit this issue");
         }
+        modelMapper.map(commentDto, comment);
     }
 }
