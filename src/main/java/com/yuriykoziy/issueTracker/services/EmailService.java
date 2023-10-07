@@ -15,8 +15,10 @@ public class EmailService {
     SimpleMailMessage message = new SimpleMailMessage();
     message.setTo(to);
     message.setSubject("Email Verification");
-    message.setText("Click the link below to verify your email:\n\n"
-        + "http://localhost:8080/api/v1/auth/verify-email?token=" + token);
+    message.setText("Hello,\n"
+        + "\nThank you for signing up, please verify your email.\n\n"
+        + "\nClick the link below to verify your email:\n\n"
+        + "\nhttp://localhost:8080/api/v1/auth/verify-email?token=" + token);
 
     // Send the email
     javaMailSender.send(message);
