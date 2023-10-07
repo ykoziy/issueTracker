@@ -3,7 +3,6 @@ package com.yuriykoziy.issueTracker.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -129,7 +128,7 @@ public class AuthService {
 
       // Mark the user as verified
       UserProfile user = verificationToken.getUser();
-      user.setVerified(true);
+      user.setEnabled(true);
       userProfileRepository.save(user);
 
       // Delete the verification token

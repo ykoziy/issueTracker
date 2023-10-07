@@ -47,8 +47,7 @@ public class UserProfile implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked = false;
-    private Boolean enabled = true;
-    private boolean isVerified = false;
+    private Boolean enabled = false;
     private LocalDateTime lockedOn;
     @UpdateTimestamp
     private LocalDateTime updatedOn;

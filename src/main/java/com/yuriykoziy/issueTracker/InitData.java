@@ -48,13 +48,13 @@ public class InitData implements ApplicationRunner {
                 UserProfile userG = new UserProfile("Annie", "Bissatt", "abissatt3@cocolog-nifty.com", "abissatt3", pwd,
                                 UserRole.USER);
 
-                userA.setVerified(true);
-                userB.setVerified(true);
-                userC.setVerified(true);
-                userD.setVerified(true);
-                userE.setVerified(true);
-                userF.setVerified(true);
-                userG.setVerified(true);
+                userA.setEnabled(true);
+                userB.setEnabled(true);
+                userC.setEnabled(true);
+                userD.setEnabled(true);
+                userE.setEnabled(true);
+                userF.setEnabled(true);
+                userG.setEnabled(true);
                 userProfileRepository.save(userA);
                 userProfileRepository.save(userB);
                 userProfileRepository.save(userC);
