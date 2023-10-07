@@ -48,6 +48,7 @@ public class UserProfile implements UserDetails {
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = true;
+    private boolean isVerified = false;
     private LocalDateTime lockedOn;
     @UpdateTimestamp
     private LocalDateTime updatedOn;

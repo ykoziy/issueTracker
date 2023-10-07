@@ -15,3 +15,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: user
+    password: user-pwd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

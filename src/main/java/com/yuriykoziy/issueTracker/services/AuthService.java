@@ -1,7 +1,9 @@
 package com.yuriykoziy.issueTracker.services;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,10 +16,13 @@ import com.yuriykoziy.issueTracker.controllers.auth.AuthenticationRequest;
 import com.yuriykoziy.issueTracker.controllers.auth.AuthenticationResponse;
 import com.yuriykoziy.issueTracker.dto.RegistrationDto;
 import com.yuriykoziy.issueTracker.enums.UserRole;
+import com.yuriykoziy.issueTracker.exceptions.TokenExpiredException;
 import com.yuriykoziy.issueTracker.exceptions.UserAlreadyExistException;
 import com.yuriykoziy.issueTracker.exceptions.ValidationException;
 import com.yuriykoziy.issueTracker.models.UserProfile;
+import com.yuriykoziy.issueTracker.models.VerificationToken;
 import com.yuriykoziy.issueTracker.repositories.UserProfileRepository;
+import com.yuriykoziy.issueTracker.repositories.VerificationTokenRepository;
 import com.yuriykoziy.issueTracker.security.jwt.JwtService;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +35,8 @@ public class AuthService {
    private final AuthenticationManager authenticationManager;
    private final UserProfileRepository userProfileRepository;
    private final PasswordEncoder passwordEncoder;
+   private VerificationTokenRepository tokenRepository;
+   private EmailService emailService;
 
    private static final int MAX_ATTEMPTS = 3;
 
@@ -63,6 +70,14 @@ public class AuthService {
          throw new UserAlreadyExistException(ErrorMessages.USERNAME_TAKEN);
       }
       userProfileRepository.save(userProfile);
+
+      // Generate a verification token and save it
+      String token = generateVerificationToken(userProfile);
+      tokenRepository.save(new VerificationToken(token, userProfile));
+
+      // Send the verification email
+      emailService.sendVerificationEmail(userProfile.getEmail(), token);
+
       return true;
    }
 
@@ -98,4 +113,26 @@ public class AuthService {
       return new AuthenticationResponse(jwtToken);
    }
 
+   public String generateVerificationToken(UserProfile user) {
+      // Generate a unique verification token
+      return UUID.randomUUID().toString();
+   }
+
+   public void verifyEmail(String token) {
+      // Find the verification token in the database
+      VerificationToken verificationToken = tokenRepository.findByToken(token);
+
+      // Check if the token is valid and not expired
+      if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+         throw new TokenExpiredException("Token is invalid or expired.");
+      }
+
+      // Mark the user as verified
+      UserProfile user = verificationToken.getUser();
+      user.setVerified(true);
+      userProfileRepository.save(user);
+
+      // Delete the verification token
+      tokenRepository.delete(verificationToken);
+   }
 }
